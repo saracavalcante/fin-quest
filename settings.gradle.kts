@@ -21,5 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "FinQuest"
 include(":app")
-include(":features")
 include(":features:home")
+include(":core:ui")
