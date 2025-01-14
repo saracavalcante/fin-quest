@@ -57,8 +57,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(project(":core:ui"))
+    implementation(project(":features:home"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
