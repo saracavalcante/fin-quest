@@ -35,6 +35,7 @@ import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.features.home.ui.goal.GoalScreen
 import br.com.finquest.features.home.ui.goals.GoalsScreen
 import br.com.finquest.features.home.ui.history.HistoryScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BottomNavigationBar() {
@@ -133,7 +134,7 @@ fun MainScreenNavigation(
         startDestination = NavigationItem.Home.route
     ) {
         composable(NavigationItem.Home.route) {
-            GoalsScreen()
+            GoalsScreen(koinViewModel())
         }
         composable(NavigationItem.Add.route) {
             GoalScreen()

@@ -23,3 +23,4 @@ rootProject.name = "FinQuest"
 include(":app")
 include(":features:home")
 include(":core:ui")
+include(":core:model")
