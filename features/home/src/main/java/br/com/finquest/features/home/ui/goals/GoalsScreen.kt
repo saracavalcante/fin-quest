@@ -17,12 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -30,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
 import br.com.finquest.features.home.ui.goals.GoalsUiState.Companion.GoalEnum
@@ -62,7 +59,7 @@ private fun GoalsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF7F7F7))
+            .background(color = Color.White)
             .padding(horizontal = 24.dp)
     ) {
         Text(
@@ -86,8 +83,8 @@ private fun GoalsScreen(
             EmptyState()
         } else {
             LazyColumn {
-                items(state.goals) {
-                    GoalContent()
+                items(state.goals.filter { it.status == state.filter.value }) { item ->
+                    GoalContent(goal = item)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -123,6 +120,7 @@ fun FilterContent(
 
 @Composable
 fun GoalContent(
+    goal: Goal,
     onClick: () -> Unit = {}
 ) {
     var keepIcon by remember { mutableIntStateOf(R.drawable.ic_keep) }
@@ -132,9 +130,8 @@ fun GoalContent(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color(0xFFFFE0D6)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         onClick = onClick
     ) {
         Row(
@@ -156,7 +153,7 @@ fun GoalContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Viagem",
+                        text = goal.title,
                         fontFamily = FontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

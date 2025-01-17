@@ -1,11 +1,12 @@
 package br.com.finquest.navigation
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,7 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.finquest.core.theme.FontFamily
-import br.com.finquest.features.home.ui.goal.GoalScreen
+import br.com.finquest.features.home.ui.addgoal.AddGoalScreen
 import br.com.finquest.features.home.ui.goals.GoalsScreen
 import br.com.finquest.features.home.ui.history.HistoryScreen
 import org.koin.androidx.compose.koinViewModel
@@ -46,9 +46,7 @@ fun BottomNavigationBar() {
         }
     ) { innerPadding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier = Modifier.padding(innerPadding)
         ) {
             MainScreenNavigation(navController = navController)
         }
@@ -129,7 +127,7 @@ fun MainScreenNavigation(
     navController: NavHostController
 ) {
     NavHost(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         navController = navController,
         startDestination = NavigationItem.Home.route
     ) {
@@ -137,7 +135,7 @@ fun MainScreenNavigation(
             GoalsScreen(koinViewModel())
         }
         composable(NavigationItem.Add.route) {
-            GoalScreen()
+            AddGoalScreen(koinViewModel())
         }
         composable(NavigationItem.History.route) {
             HistoryScreen()
