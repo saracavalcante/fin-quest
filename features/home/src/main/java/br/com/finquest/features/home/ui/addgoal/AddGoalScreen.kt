@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,17 +25,12 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,15 +47,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.components.CustomOutlinedTextField
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
+import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
+import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
 import br.com.finquest.features.home.ui.components.TopAppBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddGoalScreen(viewModel: AddGoalViewModel) {
@@ -84,6 +76,7 @@ fun AddGoalScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(Color.White)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
@@ -94,7 +87,7 @@ fun AddGoalScreen(
                 text = "Nova Meta",
                 onBackClick = {}
             )
-            ImageContent(viewModel = viewModel)
+            ImageContent(state = state, viewModel = viewModel)
             Text(
                 text = "Dados da meta",
                 fontFamily = FontFamily,
@@ -114,22 +107,28 @@ fun AddGoalScreen(
             CustomOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.balance,
-                onValueChange = { viewModel.setBalance(it) },
                 placeholder = "Valor da Meta",
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Number
-                )
+                onValueChange = { viewModel.setBalance(it) },
+                onClick = {
+                    viewModel.openBottomSheet(
+                        type = BottomSheetType.BALANCE,
+                        open = true
+                    )
+                },
+                enabled = false
             )
             CustomOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.currentBalance,
-                onValueChange = { viewModel.setCurrentBalance(it) },
                 placeholder = "Saldo que você já tem",
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Number
-                )
+                onValueChange = { viewModel.setCurrentBalance(it) },
+                onClick = {
+                    viewModel.openBottomSheet(
+                        type = BottomSheetType.CURRENT_BALANCE,
+                        open = true
+                    )
+                },
+                enabled = false
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -184,16 +183,29 @@ fun AddGoalScreen(
 
         if (state.openCustomization) {
             CustomizationBottomSheet(
+                state = state,
+                viewModel = viewModel,
                 onDismissRequest = {
                     viewModel.openCustomization(false)
                 }
             )
+        }
+
+        if (state.openAddBalance) {
+            BalanceBottomSheet(
+                state = state,
+                viewModel = viewModel,
+                type = state.bottomSheetType
+            ) {
+                viewModel.openBottomSheet(open = false)
+            }
         }
     }
 }
 
 @Composable
 fun ImageContent(
+    state: AddGoalUiState,
     modifier: Modifier = Modifier,
     viewModel: AddGoalViewModel
 ) {
@@ -217,7 +229,7 @@ fun ImageContent(
                 shape = RoundedCornerShape(16.dp)
             )
             .clip(RoundedCornerShape(16.dp))
-            .background(color = Color.White)
+            .background(color = state.color)
             .padding(vertical = 24.dp)
             .clickable(
                 indication = null,
@@ -233,7 +245,7 @@ fun ImageContent(
         ) {
             Icon(
                 modifier = Modifier.size(56.dp),
-                painter = painterResource(R.drawable.ic_savings),
+                painter = painterResource(if (state.icon != 0) state.icon else R.drawable.ic_savings),
                 contentDescription = "",
                 tint = Color.Black
             )

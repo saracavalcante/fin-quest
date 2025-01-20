@@ -9,11 +9,22 @@ data class AddGoalUiState(
     val balance: String = "",
     val currentBalance: String = "",
     val date: String = "",
-    val icon: String = "",
+    val icon: Int = 0,
+    val color: Color = Color.White,
     val showDialog: Boolean = false,
     val openCustomization: Boolean = false,
+    val openAddBalance: Boolean = false,
+    val bottomSheetType: BottomSheetType = BottomSheetType.NONE,
     val error: Throwable? = null
-)
+) {
+    companion object {
+        enum class BottomSheetType {
+            BALANCE,
+            CURRENT_BALANCE,
+            NONE
+        }
+    }
+}
 
 object GoalIcons {
     val icons = listOf(

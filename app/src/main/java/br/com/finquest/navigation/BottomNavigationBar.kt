@@ -64,7 +64,7 @@ fun BottomBar(navController: NavController) {
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
 
     NavigationBar(
-        containerColor = Color(0xFFF7F7F7)
+        containerColor = Color.White
     ) {
         screens.forEachIndexed { index, navigationItem ->
             NavItem(
@@ -110,10 +110,10 @@ fun RowScope.NavItem(
         },
         onClick = onClick,
         colors = NavigationBarItemColors(
-            selectedIndicatorColor = Color(0xFFF7F7F7),
-            selectedTextColor = Color(0xFF3831DB),
+            selectedIndicatorColor = Color.White,
+            selectedTextColor = Color.Black,
             unselectedTextColor = Color(0xFFBCBCBC),
-            selectedIconColor = Color(0xFF3831DB),
+            selectedIconColor = Color.Black,
             unselectedIconColor = Color(0xFFBCBCBC),
             disabledIconColor = Color(0xFFBCBCBC),
             disabledTextColor = Color(0xFFBCBCBC)
