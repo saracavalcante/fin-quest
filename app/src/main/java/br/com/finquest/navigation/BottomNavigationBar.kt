@@ -3,10 +3,8 @@ package br.com.finquest.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -135,7 +133,7 @@ fun MainScreenNavigation(
             GoalsScreen(koinViewModel())
         }
         composable(NavigationItem.Add.route) {
-            AddGoalScreen(koinViewModel())
+            AddGoalScreen(koinViewModel(), navController)
         }
         composable(NavigationItem.History.route) {
             HistoryScreen()

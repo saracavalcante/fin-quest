@@ -44,10 +44,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import br.com.finquest.core.components.CustomOutlinedTextField
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
@@ -58,17 +58,25 @@ import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
 import br.com.finquest.features.home.ui.components.TopAppBar
 
 @Composable
-fun AddGoalScreen(viewModel: AddGoalViewModel) {
+fun AddGoalScreen(
+    viewModel: AddGoalViewModel,
+    navController: NavController
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    AddGoalScreen(state, viewModel)
+    AddGoalScreen(
+        state = state,
+        viewModel = viewModel,
+        navController = navController
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddGoalScreen(
     state: AddGoalUiState,
-    viewModel: AddGoalViewModel
+    viewModel: AddGoalViewModel,
+    navController: NavController
 ) {
     var isChecked by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -85,7 +93,7 @@ fun AddGoalScreen(
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Nova Meta",
-                onBackClick = {}
+                onBackClick = { navController.popBackStack() }
             )
             ImageContent(state = state, viewModel = viewModel)
             Text(
@@ -150,9 +158,7 @@ fun AddGoalScreen(
                     }
                 )
             }
-            AnimatedVisibility(
-                visible = isChecked
-            ) {
+            AnimatedVisibility(visible = isChecked) {
                 DatePicker(
                     state = datePickerState,
                     showModeToggle = false,
@@ -172,7 +178,7 @@ fun AddGoalScreen(
                     containerColor = Color.Black,
                     contentColor = Color.White
                 ),
-                onClick = {}
+                onClick = { navController.navigate("home") }
             ) {
                 Text(
                     text = "Criar meta",
@@ -259,13 +265,4 @@ fun ImageContent(
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun PreviewScreen() {
-    AddGoalScreen(
-        AddGoalUiState(),
-        AddGoalViewModel()
-    )
 }

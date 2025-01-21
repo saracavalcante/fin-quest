@@ -68,6 +68,7 @@ dependencies {
 
     implementation(project(":core:ui"))
     implementation(project(":features:home"))
+    implementation(project(":core:navigation"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

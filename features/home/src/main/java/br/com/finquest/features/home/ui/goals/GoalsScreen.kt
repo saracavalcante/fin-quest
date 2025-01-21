@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.goals
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,8 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -104,15 +108,20 @@ fun FilterContent(
         items(GoalEnum.entries.toTypedArray()) { item ->
             FilterChip(
                 selected = state.filter.value == item.value,
-                onClick = {
-                    viewModel.setStatus(item)
-                },
+                onClick = { viewModel.setStatus(item) },
                 label = {
                     Text(
                         text = item.value,
                         fontFamily = FontFamily
                     )
-                }
+                },
+                border = BorderStroke(width = 0.dp, color = Color.Transparent),
+                colors =  FilterChipDefaults.filterChipColors(
+                    containerColor = Color(0xFFF5F5F5),
+                    labelColor = Color.Black,
+                    selectedContainerColor = Color.Black,
+                    selectedLabelColor = Color.White
+                )
             )
         }
     }
@@ -144,7 +153,7 @@ fun GoalContent(
                 modifier = Modifier.size(28.dp),
                 painter = painterResource(R.drawable.ic_savings),
                 contentDescription = "",
-                tint = Color(0xFF3831DB)
+                tint = Color.Black
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -159,7 +168,7 @@ fun GoalContent(
                         fontSize = 16.sp
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    Image(
+                    Icon(
                         modifier = Modifier
                             .clickable(
                                 interactionSource = null,
@@ -173,7 +182,8 @@ fun GoalContent(
                                 }
                             ),
                         painter = painterResource(keepIcon),
-                        contentDescription = ""
+                        contentDescription = "",
+                        tint = Color.Black
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -189,7 +199,8 @@ fun GoalContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
-                    color = Color(0xFF3831DB),
+                    color = Color.Black,
+                    trackColor = Color(0xFFF5F5F5),
                     drawStopIndicator = {}
                 )
             }
