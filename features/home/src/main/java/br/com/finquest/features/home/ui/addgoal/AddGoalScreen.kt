@@ -60,14 +60,14 @@ import br.com.finquest.features.home.ui.components.TopAppBar
 @Composable
 fun AddGoalScreen(
     viewModel: AddGoalViewModel,
-    navController: NavController
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     AddGoalScreen(
         state = state,
         viewModel = viewModel,
-        navController = navController
+        onBackClick = onBackClick
     )
 }
 
@@ -76,7 +76,7 @@ fun AddGoalScreen(
 fun AddGoalScreen(
     state: AddGoalUiState,
     viewModel: AddGoalViewModel,
-    navController: NavController
+    onBackClick: () -> Unit,
 ) {
     var isChecked by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -93,7 +93,7 @@ fun AddGoalScreen(
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 text = "Nova Meta",
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBackClick
             )
             ImageContent(state = state, viewModel = viewModel)
             Text(
@@ -178,7 +178,7 @@ fun AddGoalScreen(
                     containerColor = Color.Black,
                     contentColor = Color.White
                 ),
-                onClick = { navController.navigate("home") }
+                onClick = {  }
             ) {
                 Text(
                     text = "Criar meta",

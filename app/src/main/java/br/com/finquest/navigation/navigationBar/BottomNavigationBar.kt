@@ -1,8 +1,7 @@
-package br.com.finquest.navigation
+package br.com.finquest.navigation.navigationBar
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -24,21 +23,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import br.com.finquest.core.theme.FontFamily
-import br.com.finquest.features.home.ui.addgoal.AddGoalScreen
-import br.com.finquest.features.home.ui.details.GoalDetailsScreen
-import br.com.finquest.features.home.ui.goals.GoalsScreen
-import br.com.finquest.features.home.ui.history.HistoryScreen
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun BottomNavigationBar() {
-    val navController = rememberNavController()
+fun BottomNavigationBar(
+    navController: NavController,
+    content: @Composable () -> Unit
+) {
     Scaffold(
         bottomBar = {
             BottomBar(navController = navController)
@@ -47,7 +38,7 @@ fun BottomNavigationBar() {
         Box(
             modifier = Modifier.padding(innerPadding)
         ) {
-            MainScreenNavigation(navController = navController)
+            content()
         }
     }
 }
@@ -60,6 +51,7 @@ fun BottomBar(navController: NavController) {
         NavigationItem.History
     )
 
+    val state = rememberBottomNavigationState(navController)
     var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
 
     NavigationBar(
@@ -71,13 +63,7 @@ fun BottomBar(navController: NavController) {
                 selected = selectedItemIndex == index
             ) {
                 selectedItemIndex = index
-                navController.navigate(navigationItem.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                state.openRoute(navigationItem.route)
             }
         }
     }
@@ -118,27 +104,4 @@ fun RowScope.NavItem(
             disabledTextColor = Color(0xFFBCBCBC)
         )
     )
-}
-
-@Composable
-fun MainScreenNavigation(
-    modifier: Modifier = Modifier,
-    navController: NavHostController
-) {
-    NavHost(
-        modifier = modifier.fillMaxSize(),
-        navController = navController,
-        startDestination = NavigationItem.Home.route
-    ) {
-        composable(NavigationItem.Home.route) {
-            GoalsScreen(koinViewModel())
-        }
-        composable(NavigationItem.Add.route) {
-            AddGoalScreen(koinViewModel(), navController)
-        }
-        composable(NavigationItem.History.route) {
-            //HistoryScreen()
-            GoalDetailsScreen(koinViewModel())
-        }
-    }
 }

@@ -49,16 +49,24 @@ import br.com.finquest.core.ui.R
 import br.com.finquest.features.home.ui.goals.GoalsUiState.Companion.GoalEnum
 
 @Composable
-fun GoalsScreen(viewModel: GoalsViewModel) {
+fun GoalsScreen(
+    viewModel: GoalsViewModel,
+    onGoalClick: (String) -> Unit
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    GoalsScreen(state, viewModel)
+    GoalsScreen(
+        state = state,
+        viewModel = viewModel,
+        onClick = onGoalClick
+    )
 }
 
 @Composable
 private fun GoalsScreen(
     state: GoalsUiState,
-    viewModel: GoalsViewModel
+    viewModel: GoalsViewModel,
+    onClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -88,7 +96,7 @@ private fun GoalsScreen(
         } else {
             LazyColumn {
                 items(state.goals.filter { it.status == state.filter.value }) { item ->
-                    GoalContent(goal = item)
+                    GoalContent(goal = item, onClick = { onClick(item.title) })
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -238,5 +246,5 @@ fun EmptyState() {
 @Preview
 @Composable
 private fun ScreenPreview() {
-    GoalsScreen(GoalsUiState(), GoalsViewModel())
+    GoalsScreen(GoalsUiState(), GoalsViewModel()){}
 }

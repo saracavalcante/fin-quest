@@ -31,7 +31,9 @@ import br.com.finquest.core.ui.R
 import br.com.finquest.features.home.ui.components.TopAppBar
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(
+    onBackClick: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +45,7 @@ fun HistoryScreen() {
         TopAppBar(
             modifier = Modifier.fillMaxWidth(),
             text = "Histórico",
-            onBackClick = {}
+            onBackClick = onBackClick
         )
         Text(
             text = "Janeiro",

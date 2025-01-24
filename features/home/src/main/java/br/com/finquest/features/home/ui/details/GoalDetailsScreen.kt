@@ -40,12 +40,16 @@ import br.com.finquest.features.home.ui.components.CircularProgressIndicator
 import br.com.finquest.features.home.ui.components.TopAppBar
 
 @Composable
-fun GoalDetailsScreen(viewModel: GoalDetailsViewModel) {
+fun GoalDetailsScreen(
+    viewModel: GoalDetailsViewModel,
+    onBackClick: () -> Unit
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     GoalDetailsScreen(
         state = state,
-        viewModel = viewModel
+        viewModel = viewModel,
+        onBackClick = onBackClick
     )
 
     if (state.showDeleteDialog) {
@@ -65,7 +69,8 @@ fun GoalDetailsScreen(viewModel: GoalDetailsViewModel) {
 @Composable
 fun GoalDetailsScreen(
     state: GoalDetailsUiState,
-    viewModel: GoalDetailsViewModel
+    viewModel: GoalDetailsViewModel,
+    onBackClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -75,7 +80,7 @@ fun GoalDetailsScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopAppBarContent(viewModel = viewModel)
+        TopAppBarContent(viewModel = viewModel, onClick = onBackClick)
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Meta",
@@ -171,14 +176,15 @@ private fun GoalContent() {
 @Composable
 private fun TopAppBarContent(
     modifier: Modifier = Modifier,
-    viewModel: GoalDetailsViewModel
+    viewModel: GoalDetailsViewModel,
+    onClick: () -> Unit
 ) {
     TopAppBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp),
         text = "Viagem",
-        onBackClick = { },
+        onBackClick = onClick,
         actions = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -323,5 +329,5 @@ private fun PreviewScreen() {
     GoalDetailsScreen(
         viewModel = GoalDetailsViewModel(),
         state = GoalDetailsUiState()
-    )
+    ) {}
 }
