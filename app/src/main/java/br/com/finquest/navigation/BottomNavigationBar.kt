@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.features.home.ui.addgoal.AddGoalScreen
+import br.com.finquest.features.home.ui.details.GoalDetailsScreen
 import br.com.finquest.features.home.ui.goals.GoalsScreen
 import br.com.finquest.features.home.ui.history.HistoryScreen
 import org.koin.androidx.compose.koinViewModel
@@ -136,7 +137,8 @@ fun MainScreenNavigation(
             AddGoalScreen(koinViewModel(), navController)
         }
         composable(NavigationItem.History.route) {
-            HistoryScreen()
+            //HistoryScreen()
+            GoalDetailsScreen(koinViewModel())
         }
     }
 }
