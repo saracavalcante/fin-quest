@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import br.com.finquest.core.theme.FinQuestTheme
 import br.com.finquest.navigation.AppNavHost
@@ -17,17 +16,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FinQuestTheme {
-                App()
+                AppNavigation()
             }
         }
     }
 }
 
 @Composable
-fun App() {
+fun AppNavigation() {
     val navController = rememberNavController()
 
-    BottomNavigationBar(navController) {
+    BottomNavigationBar(
+        navController = navController
+    ) {
         AppNavHost(navController)
     }
 }

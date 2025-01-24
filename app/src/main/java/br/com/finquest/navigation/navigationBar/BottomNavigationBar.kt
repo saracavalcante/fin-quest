@@ -1,5 +1,6 @@
 package br.com.finquest.navigation.navigationBar
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -12,9 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import br.com.finquest.core.theme.FontFamily
 
 @Composable
@@ -45,25 +47,37 @@ fun BottomNavigationBar(
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val screens = listOf(
+    val destinations = listOf(
         NavigationItem.Home,
         NavigationItem.Add,
         NavigationItem.History
     )
 
-    val state = rememberBottomNavigationState(navController)
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val backStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry.value?.destination?.route
+    val showNavigationBar by remember(currentRoute) {
+        mutableStateOf(destinations.map { it.route }.contains(currentRoute))
+    }
 
-    NavigationBar(
-        containerColor = Color.White
+    AnimatedVisibility(
+        visible = showNavigationBar
     ) {
-        screens.forEachIndexed { index, navigationItem ->
-            NavItem(
-                screen = navigationItem,
-                selected = selectedItemIndex == index
-            ) {
-                selectedItemIndex = index
-                state.openRoute(navigationItem.route)
+        NavigationBar(
+            containerColor = Color.White
+        ) {
+            destinations.forEach { item ->
+                NavItem(
+                    screen = item,
+                    selected = item.route == currentRoute
+                ) {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             }
         }
     }
