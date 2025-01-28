@@ -67,7 +67,7 @@ fun AddGoalScreen(
     AddGoalScreen(
         state = state,
         viewModel = viewModel,
-        onBackClick = onBackClick
+        onCreateClick = onBackClick
     )
 }
 
@@ -76,135 +76,134 @@ fun AddGoalScreen(
 fun AddGoalScreen(
     state: AddGoalUiState,
     viewModel: AddGoalViewModel,
-    onBackClick: () -> Unit,
+    onCreateClick: () -> Unit,
 ) {
     var isChecked by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 24.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Nova Meta",
+            fontFamily = FontFamily,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+        ImageContent(state = state, viewModel = viewModel)
+        Text(
+            text = "Dados da meta",
+            fontFamily = FontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.name,
+            onValueChange = { viewModel.setName(it) },
+            placeholder = "Nome",
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Text
+            )
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.balance,
+            placeholder = "Valor da Meta",
+            onValueChange = { viewModel.setBalance(it) },
+            onClick = {
+                viewModel.openBottomSheet(
+                    type = BottomSheetType.BALANCE,
+                    open = true
+                )
+            },
+            enabled = false
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.currentBalance,
+            placeholder = "Saldo que você já tem",
+            onValueChange = { viewModel.setCurrentBalance(it) },
+            onClick = {
+                viewModel.openBottomSheet(
+                    type = BottomSheetType.CURRENT_BALANCE,
+                    open = true
+                )
+            },
+            enabled = false
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                text = "Nova Meta",
-                onBackClick = onBackClick
-            )
-            ImageContent(state = state, viewModel = viewModel)
             Text(
-                text = "Dados da meta",
+                text = "Possui data limite?",
                 fontFamily = FontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp
+                fontSize = 12.sp
             )
-            CustomOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.name,
-                onValueChange = { viewModel.setName(it) },
-                placeholder = "Nome",
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Text
-                )
-            )
-            CustomOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.balance,
-                placeholder = "Valor da Meta",
-                onValueChange = { viewModel.setBalance(it) },
-                onClick = {
-                    viewModel.openBottomSheet(
-                        type = BottomSheetType.BALANCE,
-                        open = true
-                    )
-                },
-                enabled = false
-            )
-            CustomOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.currentBalance,
-                placeholder = "Saldo que você já tem",
-                onValueChange = { viewModel.setCurrentBalance(it) },
-                onClick = {
-                    viewModel.openBottomSheet(
-                        type = BottomSheetType.CURRENT_BALANCE,
-                        open = true
-                    )
-                },
-                enabled = false
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Possui data limite?",
-                    fontFamily = FontFamily,
-                    fontSize = 12.sp
-                )
-                Checkbox(
-                    checked = isChecked,
-                    colors = CheckboxDefaults.colors(
-                        uncheckedColor = Color(0xFFBCBCBC),
-                        checkedColor = Color.Black
-                    ),
-                    onCheckedChange = {
-                        isChecked = !isChecked
-                    }
-                )
-            }
-            AnimatedVisibility(visible = isChecked) {
-                DatePicker(
-                    state = datePickerState,
-                    showModeToggle = false,
-                    headline = null,
-                    title = null,
-                    colors = DatePickerDefaults.colors(
-                        containerColor = Color.White,
-                        selectedDayContainerColor = Color.Black,
-                        selectedYearContainerColor = Color.Black,
-                        todayDateBorderColor = Color.Black
-                    )
-                )
-            }
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+            Checkbox(
+                checked = isChecked,
+                colors = CheckboxDefaults.colors(
+                    uncheckedColor = Color(0xFFBCBCBC),
+                    checkedColor = Color.Black
                 ),
-                onClick = {  }
-            ) {
-                Text(
-                    text = "Criar meta",
-                    fontFamily = FontFamily
-                )
-            }
-        }
-
-        if (state.openCustomization) {
-            CustomizationBottomSheet(
-                state = state,
-                viewModel = viewModel,
-                onDismissRequest = {
-                    viewModel.openCustomization(false)
+                onCheckedChange = {
+                    isChecked = !isChecked
                 }
             )
         }
+        AnimatedVisibility(visible = isChecked) {
+            DatePicker(
+                state = datePickerState,
+                showModeToggle = false,
+                headline = null,
+                title = null,
+                colors = DatePickerDefaults.colors(
+                    containerColor = Color.White,
+                    selectedDayContainerColor = Color.Black,
+                    selectedYearContainerColor = Color.Black,
+                    todayDateBorderColor = Color.Black
+                )
+            )
+        }
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ),
+            onClick = onCreateClick
+        ) {
+            Text(
+                text = "Criar meta",
+                fontFamily = FontFamily
+            )
+        }
+    }
 
-        if (state.openAddBalance) {
-            BalanceBottomSheet(
-                state = state,
-                viewModel = viewModel,
-                type = state.bottomSheetType
-            ) {
-                viewModel.openBottomSheet(open = false)
+    if (state.openCustomization) {
+        CustomizationBottomSheet(
+            state = state,
+            viewModel = viewModel,
+            onDismissRequest = {
+                viewModel.openCustomization(false)
             }
+        )
+    }
+
+    if (state.openAddBalance) {
+        BalanceBottomSheet(
+            state = state,
+            viewModel = viewModel,
+            type = state.bottomSheetType
+        ) {
+            viewModel.openBottomSheet(open = false)
         }
     }
 }

@@ -10,14 +10,10 @@ fun NavController.navigateToHistory() {
     navigate(HISTORY_ROUTE)
 }
 
-fun NavGraphBuilder.historyScreen(
-    onBackClick: () -> Unit
-) {
+fun NavGraphBuilder.historyScreen() {
     composable(
         route = HISTORY_ROUTE
     ) {
-        HistoryScreen(
-            onBackClick = onBackClick
-        )
+        HistoryScreen()
     }
 }

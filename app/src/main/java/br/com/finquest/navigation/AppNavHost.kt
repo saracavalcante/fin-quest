@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import br.com.finquest.features.home.ui.addgoal.addGoalScreen
+import br.com.finquest.features.home.ui.addgoal.navigateToGoals
 import br.com.finquest.features.home.ui.details.goalDetailsScreen
 import br.com.finquest.features.home.ui.details.navigateToDetails
 import br.com.finquest.features.home.ui.goals.GOALS_ROUTE
@@ -25,7 +26,7 @@ fun AppNavHost(navController: NavHostController) {
             }
         )
         addGoalScreen(
-            onBackClick = navController::popBackStack
+            onClick = { navController.navigateToGoals() }
         )
         historyScreen(
             onBackClick = navController::popBackStack
