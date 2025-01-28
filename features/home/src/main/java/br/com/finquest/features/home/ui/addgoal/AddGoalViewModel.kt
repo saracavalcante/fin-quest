@@ -1,14 +1,23 @@
 package br.com.finquest.features.home.ui.addgoal
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import br.com.finquest.core.common.enums.GoalEnum
+import br.com.finquest.core.common.util.toCents
+import br.com.finquest.core.domain.AddGoalUseCase
+import br.com.finquest.core.model.data.Goal
 import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Locale
 
-class AddGoalViewModel : ViewModel() {
+class AddGoalViewModel(
+    private val addGoalUseCase: AddGoalUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddGoalUiState())
     val uiState: StateFlow<AddGoalUiState> = _uiState
@@ -102,6 +111,22 @@ class AddGoalViewModel : ViewModel() {
             } else {
                 it.copy(currentBalance = balance.dropLast(1))
             }
+        }
+    }
+
+    fun addGoal() {
+        viewModelScope.launch {
+            addGoalUseCase.invoke(
+                Goal(
+                    name = uiState.value.name,
+                    icon = uiState.value.icon,
+                    color = uiState.value.color.toArgb(),
+                    targetAmount = uiState.value.balance.toCents(),
+                    savedAmount = uiState.value.currentBalance.toCents(),
+                    deadline = uiState.value.date,
+                    status = GoalEnum.IN_PROGRESS.value
+                )
+            )
         }
     }
 }

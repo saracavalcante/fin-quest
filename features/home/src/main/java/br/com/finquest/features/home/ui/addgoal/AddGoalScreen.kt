@@ -47,15 +47,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import br.com.finquest.core.components.CustomOutlinedTextField
 import br.com.finquest.core.theme.FontFamily
-import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
 import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
 import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
-import br.com.finquest.features.home.ui.components.TopAppBar
 
 @Composable
 fun AddGoalScreen(
@@ -67,7 +64,7 @@ fun AddGoalScreen(
     AddGoalScreen(
         state = state,
         viewModel = viewModel,
-        onCreateClick = onBackClick
+        navigateToHome = onBackClick
     )
 }
 
@@ -76,7 +73,7 @@ fun AddGoalScreen(
 fun AddGoalScreen(
     state: AddGoalUiState,
     viewModel: AddGoalViewModel,
-    onCreateClick: () -> Unit,
+    navigateToHome: () -> Unit = {}
 ) {
     var isChecked by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -178,7 +175,10 @@ fun AddGoalScreen(
                 containerColor = Color.Black,
                 contentColor = Color.White
             ),
-            onClick = onCreateClick
+            onClick = {
+                viewModel.addGoal()
+                navigateToHome()
+            }
         ) {
             Text(
                 text = "Criar meta",
@@ -250,7 +250,7 @@ fun ImageContent(
         ) {
             Icon(
                 modifier = Modifier.size(56.dp),
-                painter = painterResource(if (state.icon != 0) state.icon else R.drawable.ic_savings),
+                painter = painterResource(state.icon),
                 contentDescription = "",
                 tint = Color.Black
             )

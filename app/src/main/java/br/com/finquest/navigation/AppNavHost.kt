@@ -28,9 +28,7 @@ fun AppNavHost(navController: NavHostController) {
         addGoalScreen(
             onClick = { navController.navigateToGoals() }
         )
-        historyScreen(
-            onBackClick = navController::popBackStack
-        )
+        historyScreen()
         goalDetailsScreen(
             onBackClick = navController::popBackStack
         )

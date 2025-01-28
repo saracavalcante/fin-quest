@@ -24,8 +24,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,14 +37,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.finquest.core.common.enums.GoalEnum
+import br.com.finquest.core.common.util.toMoneyString
 import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
-import br.com.finquest.features.home.ui.goals.GoalsUiState.Companion.GoalEnum
 
 @Composable
 fun GoalsScreen(
@@ -68,6 +66,8 @@ private fun GoalsScreen(
     viewModel: GoalsViewModel,
     onClick: (String) -> Unit
 ) {
+    val filteredGoals = state.goals.filter { it.status == state.filter.value }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,14 +89,20 @@ private fun GoalsScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         FilterContent(state = state, viewModel = viewModel)
-        Spacer(modifier = Modifier.height(16.dp))
 
-        if (state.goals.isEmpty()) {
-            EmptyState()
-        } else {
-            LazyColumn {
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (filteredGoals.isEmpty()) {
+                item {
+                    EmptyState()
+                }
+            } else {
                 items(state.goals.filter { it.status == state.filter.value }) { item ->
-                    GoalContent(goal = item, onClick = { onClick(item.title) })
+                    GoalContent(goal = item, onClick = { onClick(item.name) })
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -124,7 +130,7 @@ fun FilterContent(
                     )
                 },
                 border = BorderStroke(width = 0.dp, color = Color.Transparent),
-                colors =  FilterChipDefaults.filterChipColors(
+                colors = FilterChipDefaults.filterChipColors(
                     containerColor = Color(0xFFF5F5F5),
                     labelColor = Color.Black,
                     selectedContainerColor = Color.Black,
@@ -147,7 +153,7 @@ fun GoalContent(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFE0D6)
+            containerColor = Color(goal.color)
         ),
         onClick = onClick
     ) {
@@ -159,7 +165,7 @@ fun GoalContent(
         ) {
             Icon(
                 modifier = Modifier.size(28.dp),
-                painter = painterResource(R.drawable.ic_savings),
+                painter = painterResource(goal.icon),
                 contentDescription = "",
                 tint = Color.Black
             )
@@ -170,7 +176,7 @@ fun GoalContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = goal.title,
+                        text = goal.name,
                         fontFamily = FontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -196,7 +202,7 @@ fun GoalContent(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "R$ 20,00 de R$ 100,00",
+                    text = "R$ ${goal.savedAmount.toMoneyString()} de R$ ${goal.targetAmount.toMoneyString()}",
                     fontFamily = FontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
@@ -219,7 +225,7 @@ fun GoalContent(
 @Composable
 fun EmptyState() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -243,8 +249,9 @@ fun EmptyState() {
     }
 }
 
+/*
 @Preview
 @Composable
 private fun ScreenPreview() {
     GoalsScreen(GoalsUiState(), GoalsViewModel()){}
-}
+}*/
