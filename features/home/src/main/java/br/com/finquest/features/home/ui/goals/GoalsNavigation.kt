@@ -7,7 +7,7 @@ import org.koin.androidx.compose.koinViewModel
 const val GOALS_ROUTE = "goals"
 
 fun NavGraphBuilder.goalsScreen(
-    onGoalClick: (String) -> Unit
+    onGoalClick: (Int?) -> Unit
 ) {
     composable(route = GOALS_ROUTE) {
         GoalsScreen(

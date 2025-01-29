@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 interface GoalLocalDataSource {
     suspend fun getAllGoals(): Flow<List<Goal>>
     suspend fun insertGoal(goal: Goal)
-    suspend fun getGoalById(id: Int): Goal
+    suspend fun getGoalById(id: Int): Flow<Goal>
     suspend fun updateGoal(goal: Goal)
     suspend fun deleteGoal(goal: Goal)
 }
@@ -23,7 +23,9 @@ class GoalLocalDataSourceImpl(private val goalDao: GoalDao) : GoalLocalDataSourc
 
     override suspend fun insertGoal(goal: Goal) = goalDao.insertGoal(goal.asEntity())
 
-    override suspend fun getGoalById(id: Int): Goal = goalDao.getGoalById(id).asModel()
+    override suspend fun getGoalById(id: Int): Flow<Goal> = goalDao.getGoalById(id).map {
+        it.asModel()
+    }
 
     override suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal.asEntity())
 

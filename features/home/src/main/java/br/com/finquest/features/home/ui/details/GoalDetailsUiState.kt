@@ -1,9 +1,11 @@
 package br.com.finquest.features.home.ui.details
 
+import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.model.data.MonthlyContribution
 
 data class GoalDetailsUiState(
     val isLoading: Boolean = false,
+    val goal: Goal? = null,
     val showDeleteDialog: Boolean = false,
     val showPauseDialog: Boolean = false,
     val error: Throwable? = null

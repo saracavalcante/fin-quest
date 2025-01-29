@@ -49,7 +49,7 @@ import br.com.finquest.core.ui.R
 @Composable
 fun GoalsScreen(
     viewModel: GoalsViewModel,
-    onGoalClick: (String) -> Unit
+    onGoalClick: (Int?) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -64,7 +64,7 @@ fun GoalsScreen(
 private fun GoalsScreen(
     state: GoalsUiState,
     viewModel: GoalsViewModel,
-    onClick: (String) -> Unit
+    onClick: (Int?) -> Unit
 ) {
     val filteredGoals = state.goals.filter { it.status == state.filter.value }
 
@@ -102,7 +102,12 @@ private fun GoalsScreen(
                 }
             } else {
                 items(state.goals.filter { it.status == state.filter.value }) { item ->
-                    GoalContent(goal = item, onClick = { onClick(item.name) })
+                    GoalContent(
+                        goal = item,
+                        onClick = {
+                            onClick(item.id)
+                        }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -147,7 +152,6 @@ fun GoalContent(
     onClick: () -> Unit = {}
 ) {
     var keepIcon by remember { mutableIntStateOf(R.drawable.ic_keep) }
-    val currentProgress by remember { mutableFloatStateOf(0.3f) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -209,12 +213,15 @@ fun GoalContent(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(
-                    progress = { currentProgress },
+                    progress = {
+                        (goal.savedAmount.toFloat() / goal.targetAmount.toFloat())
+                            .coerceIn(0f, 1f)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
                     color = Color.Black,
-                    trackColor = Color(0xFFF5F5F5),
+                    trackColor = Color.White,
                     drawStopIndicator = {}
                 )
             }

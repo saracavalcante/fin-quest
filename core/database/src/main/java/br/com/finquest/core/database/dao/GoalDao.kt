@@ -19,7 +19,7 @@ interface GoalDao {
     fun getAllGoals(): Flow<List<GoalEntity>>
 
     @Query("SELECT * FROM goals WHERE id = :id")
-    fun getGoalById(id: Int): GoalEntity
+    fun getGoalById(id: Int): Flow<GoalEntity>
 
     @Update
     fun updateGoal(goalEntity: GoalEntity)

@@ -37,7 +37,7 @@ fun CircularProgressIndicator(
     indicatorThickness: Dp = 12.dp,
     animationDuration: Int = 1000,
 ) {
-    var dataUsageRemember by remember { mutableFloatStateOf(-1f) }
+    var dataUsageRemember by remember { mutableFloatStateOf(0f) }
     val dataUsageAnimate = animateFloatAsState(
         targetValue = dataUsageRemember,
         animationSpec = tween(
@@ -45,7 +45,7 @@ fun CircularProgressIndicator(
         ), label = ""
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(dataUsage) {
         dataUsageRemember = dataUsage
     }
 

@@ -21,8 +21,8 @@ fun AppNavHost(navController: NavHostController) {
         startDestination = GOALS_ROUTE
     ) {
         goalsScreen(
-            onGoalClick = {
-                navController.navigateToDetails()
+            onGoalClick = { goalId ->
+                navController.navigateToDetails(goalId.toString())
             }
         )
         addGoalScreen(

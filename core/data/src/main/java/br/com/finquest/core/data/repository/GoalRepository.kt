@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface GoalRepository {
     suspend fun getAllGoals(): Flow<List<Goal>>
     suspend fun insertGoal(goal: Goal)
-    suspend fun getGoalById(id: Int): Goal
+    suspend fun getGoalById(id: Int): Flow<Goal>
     suspend fun updateGoal(goal: Goal)
     suspend fun deleteGoal(goal: Goal)
 }
@@ -20,7 +20,7 @@ class GoalRepositoryImpl(
 
     override suspend fun insertGoal(goal: Goal) = dataSource.insertGoal(goal)
 
-    override suspend fun getGoalById(id: Int): Goal = dataSource.getGoalById(id)
+    override suspend fun getGoalById(id: Int): Flow<Goal> = dataSource.getGoalById(id)
 
     override suspend fun updateGoal(goal: Goal) = dataSource.updateGoal(goal)
 
