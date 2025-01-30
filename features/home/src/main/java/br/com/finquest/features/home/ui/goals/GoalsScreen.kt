@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.goals
 
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,11 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +50,10 @@ fun GoalsScreen(
     onGoalClick: (Int?) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.goals) {
+        viewModel.getGoals()
+    }
 
     GoalsScreen(
         state = state,
@@ -89,7 +91,6 @@ private fun GoalsScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         FilterContent(state = state, viewModel = viewModel)
-
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -104,6 +105,7 @@ private fun GoalsScreen(
                 items(state.goals.filter { it.status == state.filter.value }) { item ->
                     GoalContent(
                         goal = item,
+                        viewModel = viewModel,
                         onClick = {
                             onClick(item.id)
                         }
@@ -149,9 +151,13 @@ fun FilterContent(
 @Composable
 fun GoalContent(
     goal: Goal,
+    viewModel: GoalsViewModel,
     onClick: () -> Unit = {}
 ) {
-    var keepIcon by remember { mutableIntStateOf(R.drawable.ic_keep) }
+    val icon by animateIntAsState(
+        targetValue = if (goal.isPinned) R.drawable.ic_keep_filled else R.drawable.ic_keep,
+        label = ""
+    )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -192,14 +198,10 @@ fun GoalContent(
                                 interactionSource = null,
                                 indication = null,
                                 onClick = {
-                                    keepIcon = if (keepIcon == R.drawable.ic_keep) {
-                                        R.drawable.ic_keep_filled
-                                    } else {
-                                        R.drawable.ic_keep
-                                    }
+                                    viewModel.togglePin(goal)
                                 }
                             ),
-                        painter = painterResource(keepIcon),
+                        painter = painterResource(icon),
                         contentDescription = "",
                         tint = Color.Black
                     )

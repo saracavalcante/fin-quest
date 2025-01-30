@@ -11,8 +11,9 @@ interface GoalLocalDataSource {
     suspend fun getAllGoals(): Flow<List<Goal>>
     suspend fun insertGoal(goal: Goal)
     suspend fun getGoalById(id: Int): Flow<Goal>
+    suspend fun updatePinStatus(goal: Goal)
     suspend fun updateGoal(goal: Goal)
-    suspend fun deleteGoal(goal: Goal)
+    suspend fun deleteGoal(id: Int)
 }
 
 class GoalLocalDataSourceImpl(private val goalDao: GoalDao) : GoalLocalDataSource {
@@ -27,7 +28,12 @@ class GoalLocalDataSourceImpl(private val goalDao: GoalDao) : GoalLocalDataSourc
         it.asModel()
     }
 
+    override suspend fun updatePinStatus(goal: Goal) {
+        val updateGoal = goal.copy(isPinned = !goal.isPinned)
+        goalDao.updateGoal(updateGoal.asEntity())
+    }
+
     override suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal.asEntity())
 
-    override suspend fun deleteGoal(goal: Goal) = goalDao.deleteGoal(goal.asEntity())
+    override suspend fun deleteGoal(id: Int) = goalDao.deleteGoal(id)
 }

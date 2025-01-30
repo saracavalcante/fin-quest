@@ -6,6 +6,7 @@ import br.com.finquest.core.model.data.MonthlyContribution
 data class GoalDetailsUiState(
     val isLoading: Boolean = false,
     val goal: Goal? = null,
+    val goalId: String = "",
     val showDeleteDialog: Boolean = false,
     val showPauseDialog: Boolean = false,
     val error: Throwable? = null

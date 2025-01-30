@@ -49,7 +49,7 @@ fun GoalDetailsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(state.goalId) {
         viewModel.getGoalById()
     }
 
@@ -60,10 +60,11 @@ fun GoalDetailsScreen(
     )
 
     if (state.showDeleteDialog) {
-        DeleteDialog {
-            viewModel.showDeleteDialog(false)
-        }
-
+        DeleteDialog(
+            viewModel = viewModel,
+            onDismissRequest = { viewModel.showDeleteDialog(false) },
+            navigateBack = onBackClick
+        )
     }
 
     if (state.showPauseDialog) {
@@ -294,7 +295,9 @@ private fun TopAppBarContent(
 
 @Composable
 fun DeleteDialog(
-    onDismissRequest: () -> Unit
+    viewModel: GoalDetailsViewModel,
+    onDismissRequest: () -> Unit,
+    navigateBack: () -> Unit
 ) {
     BaseDialog(
         onDismissRequest = onDismissRequest
@@ -335,7 +338,10 @@ fun DeleteDialog(
             DefaultButton(
                 modifier = Modifier.weight(1f),
                 text = "Continuar",
-                onClick = {}
+                onClick = {
+                    viewModel.deleteGoal()
+                    navigateBack()
+                }
             )
         }
     }

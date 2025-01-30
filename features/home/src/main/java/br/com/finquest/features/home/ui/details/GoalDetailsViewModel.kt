@@ -3,6 +3,7 @@ package br.com.finquest.features.home.ui.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.finquest.core.domain.DeleteGoalUseCase
 import br.com.finquest.core.domain.GetGoalUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +12,18 @@ import kotlinx.coroutines.launch
 
 class GoalDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val useCase: GetGoalUseCase
+    private val getGoalUseCase: GetGoalUseCase,
+    private val deleteGoalUseCase: DeleteGoalUseCase,
 ) : ViewModel() {
 
     private val args = Args(savedStateHandle)
 
     private val _uiState = MutableStateFlow(GoalDetailsUiState())
     val uiState: StateFlow<GoalDetailsUiState> = _uiState
+
+    init {
+        _uiState.update { it.copy(goalId = args.id) }
+    }
 
     fun showDeleteDialog(show: Boolean) {
         _uiState.value = _uiState.value.copy(showDeleteDialog = show)
@@ -29,9 +35,15 @@ class GoalDetailsViewModel(
 
     fun getGoalById() {
         viewModelScope.launch {
-            useCase.invoke(args.id.toInt()).collect { goal ->
+            getGoalUseCase.invoke(args.id.toInt()).collect { goal ->
                 _uiState.update { it.copy(goal = goal) }
             }
+        }
+    }
+
+    fun deleteGoal() {
+        viewModelScope.launch {
+            deleteGoalUseCase.invoke(args.id.toInt())
         }
     }
 }

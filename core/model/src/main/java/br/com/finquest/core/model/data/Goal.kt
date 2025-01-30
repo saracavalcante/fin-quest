@@ -8,5 +8,6 @@ data class Goal(
     val targetAmount: Long,
     val savedAmount: Long,
     val deadline: String? = null,
-    val status: String
+    val status: String,
+    val isPinned: Boolean = false
 )
