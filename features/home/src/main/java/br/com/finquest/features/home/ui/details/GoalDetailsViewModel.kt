@@ -21,10 +21,6 @@ class GoalDetailsViewModel(
     private val _uiState = MutableStateFlow(GoalDetailsUiState())
     val uiState: StateFlow<GoalDetailsUiState> = _uiState
 
-    init {
-        _uiState.update { it.copy(goalId = args.id) }
-    }
-
     fun showDeleteDialog(show: Boolean) {
         _uiState.value = _uiState.value.copy(showDeleteDialog = show)
     }

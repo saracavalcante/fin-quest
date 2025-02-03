@@ -1,6 +1,7 @@
 package br.com.finquest.features.home.ui.addgoal
 
 import androidx.compose.ui.graphics.Color
+import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.ui.R
 
 data class AddGoalUiState(
@@ -8,23 +9,16 @@ data class AddGoalUiState(
     val name: String = "",
     val balance: String = "",
     val currentBalance: String = "",
-    val date: String = "",
+    val deadline: String = "",
     val icon: Int = R.drawable.ic_savings,
     val color: Color = Color(0xFFF5F5F5),
     val showDialog: Boolean = false,
+    val openDateDialog: Boolean = false,
     val openCustomization: Boolean = false,
     val openAddBalance: Boolean = false,
     val bottomSheetType: BottomSheetType = BottomSheetType.NONE,
     val error: Throwable? = null
-) {
-    companion object {
-        enum class BottomSheetType {
-            BALANCE,
-            CURRENT_BALANCE,
-            NONE
-        }
-    }
-}
+)
 
 object GoalIcons {
     val icons = listOf(

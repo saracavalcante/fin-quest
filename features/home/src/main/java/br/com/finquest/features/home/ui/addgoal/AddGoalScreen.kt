@@ -1,6 +1,5 @@
 package br.com.finquest.features.home.ui.addgoal
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,18 +12,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -47,10 +45,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.components.CustomOutlinedTextField
+import br.com.finquest.core.components.DateDialog
 import br.com.finquest.core.theme.FontFamily
+import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
-import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
 import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
 
@@ -84,7 +84,6 @@ fun AddGoalScreen(
             .background(Color.White)
             .padding(24.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
             text = "Nova Meta",
@@ -92,83 +91,15 @@ fun AddGoalScreen(
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(26.dp))
         ImageContent(state = state, viewModel = viewModel)
-        Text(
-            text = "Dados da meta",
-            fontFamily = FontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp
-        )
-        CustomOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.name,
-            onValueChange = { viewModel.setName(it) },
-            placeholder = "Nome",
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
-                keyboardType = KeyboardType.Text
-            )
-        )
-        CustomOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.balance,
-            placeholder = "Valor da Meta",
-            onValueChange = { viewModel.setBalance(it) },
+        GoalContent(state = state, viewModel = viewModel)
+        Spacer(modifier = Modifier.height(26.dp))
+        DateContent(
             onClick = {
-                viewModel.openBottomSheet(
-                    type = BottomSheetType.BALANCE,
-                    open = true
-                )
-            },
-            enabled = false
+                viewModel.openDateDialog(true)
+            }
         )
-        CustomOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = state.currentBalance,
-            placeholder = "Saldo que você já tem",
-            onValueChange = { viewModel.setCurrentBalance(it) },
-            onClick = {
-                viewModel.openBottomSheet(
-                    type = BottomSheetType.CURRENT_BALANCE,
-                    open = true
-                )
-            },
-            enabled = false
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Possui data limite?",
-                fontFamily = FontFamily,
-                fontSize = 12.sp
-            )
-            Checkbox(
-                checked = isChecked,
-                colors = CheckboxDefaults.colors(
-                    uncheckedColor = Color(0xFFBCBCBC),
-                    checkedColor = Color.Black
-                ),
-                onCheckedChange = {
-                    isChecked = !isChecked
-                }
-            )
-        }
-        AnimatedVisibility(visible = isChecked) {
-            DatePicker(
-                state = datePickerState,
-                showModeToggle = false,
-                headline = null,
-                title = null,
-                colors = DatePickerDefaults.colors(
-                    containerColor = Color.White,
-                    selectedDayContainerColor = Color.Black,
-                    selectedYearContainerColor = Color.Black,
-                    todayDateBorderColor = Color.Black
-                )
-            )
-        }
         Button(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -199,13 +130,64 @@ fun AddGoalScreen(
 
     if (state.openAddBalance) {
         BalanceBottomSheet(
-            state = state,
-            viewModel = viewModel,
-            type = state.bottomSheetType
+            savedAmount = state.currentBalance,
+            targetAmount = state.balance,
+            type = state.bottomSheetType,
+            setBalance = { viewModel.setBalance(it) },
+            onDelete = { viewModel.delete(it) },
+            onDismissRequest = { viewModel.openBottomSheet(open = false) }
+        )
+    }
+
+    if (state.openDateDialog) {
+        DateDialog(
+            state = datePickerState,
+            onConfirm = {
+                datePickerState.selectedDateMillis?.let {
+                    viewModel.setDeadline(it.toString())
+                }
+                viewModel.openDateDialog(false)
+            },
+            onDismissRequest = {
+                viewModel.openDateDialog(false)
+            }
+        )
+    }
+}
+
+@Composable
+fun DateContent(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Possui data limite?",
+            fontFamily = FontFamily,
+            fontSize = 12.sp
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Box(
+            modifier = Modifier
+                .background(
+                    shape = CircleShape,
+                    color = Color(0xFFF5F5F5)
+                )
         ) {
-            viewModel.openBottomSheet(open = false)
+            IconButton(
+                onClick = onClick
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calendar),
+                    contentDescription = ""
+                )
+            }
         }
     }
+    Spacer(modifier = Modifier.height(26.dp))
 }
 
 @Composable
@@ -263,5 +245,61 @@ fun ImageContent(
                 textAlign = TextAlign.Center
             )
         }
+    }
+    Spacer(modifier = Modifier.height(26.dp))
+}
+
+@Composable
+fun GoalContent(
+    modifier: Modifier = Modifier,
+    state: AddGoalUiState,
+    viewModel: AddGoalViewModel
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Dados da meta",
+            fontFamily = FontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.name,
+            onValueChange = { viewModel.setName(it) },
+            placeholder = "Nome",
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Text
+            )
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.balance,
+            placeholder = "Valor da Meta",
+            onValueChange = { viewModel.setBalance(it) },
+            onClick = {
+                viewModel.openBottomSheet(
+                    type = BottomSheetType.BALANCE,
+                    open = true
+                )
+            },
+            enabled = false
+        )
+        CustomOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.currentBalance,
+            placeholder = "Saldo que você já tem",
+            onValueChange = { viewModel.setCurrentBalance(it) },
+            onClick = {
+                viewModel.openBottomSheet(
+                    type = BottomSheetType.CURRENT_BALANCE,
+                    open = true
+                )
+            },
+            enabled = false
+        )
     }
 }

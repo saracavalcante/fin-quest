@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import br.com.finquest.core.model.data.Goal
 import org.koin.androidx.compose.koinViewModel
 
 private const val GOAL_ID = "goalId"
@@ -20,14 +21,16 @@ fun NavController.navigateToDetails(id: String) {
 }
 
 fun NavGraphBuilder.goalDetailsScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onEditClick: (Goal) -> Unit
 ) {
     composable(
         route = GOAL_DETAIL_ROUTE
     ) {
         GoalDetailsScreen(
             viewModel = koinViewModel(),
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onEditClick = onEditClick
         )
     }
 }

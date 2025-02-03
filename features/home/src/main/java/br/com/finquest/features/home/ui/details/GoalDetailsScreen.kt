@@ -35,6 +35,7 @@ import br.com.finquest.core.common.util.toMoneyString
 import br.com.finquest.core.components.BaseDialog
 import br.com.finquest.core.components.DefaultButton
 import br.com.finquest.core.components.OutlineButton
+import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
 import br.com.finquest.features.home.ui.components.CircularProgressIndicator
@@ -45,18 +46,20 @@ import java.time.Period
 @Composable
 fun GoalDetailsScreen(
     viewModel: GoalDetailsViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onEditClick: (Goal) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.goalId) {
+    LaunchedEffect(Unit) {
         viewModel.getGoalById()
     }
 
     GoalDetailsScreen(
         state = state,
         viewModel = viewModel,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
+        onEditClick = onEditClick
     )
 
     if (state.showDeleteDialog) {
@@ -78,7 +81,8 @@ fun GoalDetailsScreen(
 fun GoalDetailsScreen(
     state: GoalDetailsUiState,
     viewModel: GoalDetailsViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onEditClick: (Goal) -> Unit
 ) {
     val progress = state.goal?.let { goal ->
         (goal.savedAmount.toFloat() / goal.targetAmount.toFloat()) * 100
@@ -91,7 +95,8 @@ fun GoalDetailsScreen(
             TopAppBarContent(
                 state = state,
                 viewModel = viewModel,
-                onClick = onBackClick
+                onClick = onBackClick,
+                onEditClick = onEditClick
             )
         },
         bottomBar = {
@@ -245,7 +250,8 @@ private fun TopAppBarContent(
     modifier: Modifier = Modifier,
     state: GoalDetailsUiState,
     viewModel: GoalDetailsViewModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onEditClick: (Goal) -> Unit
 ) {
     TopAppBar(
         modifier = modifier
@@ -262,7 +268,11 @@ private fun TopAppBarContent(
                     modifier = Modifier.clickable(
                         indication = null,
                         interactionSource = null,
-                        onClick = { }
+                        onClick = {
+                            state.goal?.let { goal ->
+                                onEditClick(goal)
+                            }
+                        }
                     ),
                     painter = painterResource(R.drawable.ic_edit),
                     contentDescription = null,
@@ -339,8 +349,8 @@ fun DeleteDialog(
                 modifier = Modifier.weight(1f),
                 text = "Continuar",
                 onClick = {
-                    viewModel.deleteGoal()
                     navigateBack()
+                    viewModel.deleteGoal()
                 }
             )
         }

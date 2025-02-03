@@ -1,4 +1,4 @@
-package br.com.finquest.features.home.ui.components.keyboard
+package br.com.finquest.core.components.keyboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

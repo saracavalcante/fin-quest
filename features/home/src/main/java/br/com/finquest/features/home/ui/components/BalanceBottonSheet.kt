@@ -16,18 +16,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.components.BaseBottomSheet
+import br.com.finquest.core.components.keyboard.KeyboardContent
 import br.com.finquest.core.theme.FontFamily
-import br.com.finquest.features.home.ui.addgoal.AddGoalUiState
-import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
-import br.com.finquest.features.home.ui.addgoal.AddGoalViewModel
-import br.com.finquest.features.home.ui.components.keyboard.KeyboardContent
 
 @Composable
 fun BalanceBottomSheet(
-    state: AddGoalUiState,
-    viewModel: AddGoalViewModel,
+    targetAmount: String = "",
+    savedAmount: String = "",
     type: BottomSheetType,
+    setBalance: (String) -> Unit,
+    onDelete: (String) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     val condition = type == BottomSheetType.BALANCE
@@ -42,18 +42,18 @@ fun BalanceBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            BalanceContent(if (condition) state.balance else state.currentBalance)
+            BalanceContent(if (condition) targetAmount else savedAmount)
             KeyboardContent(
                 onKeyClick = { key ->
                     when (key) {
                         "DEL" -> {
-                            val balance = if (condition) state.balance else state.currentBalance
-                            viewModel.delete(balance)
+                            val balance = if (condition) targetAmount else savedAmount
+                            onDelete(balance)
                         }
 
                         "CHECK" -> { onDismissRequest() }
 
-                        else -> { viewModel.setBalance(key) }
+                        else -> { setBalance(key) }
                     }
                 }
             )

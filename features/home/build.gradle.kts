@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.compose.navigation)
+    implementation(libs.gson)
 
     implementation(project(":core:ui"))
     implementation(project(":core:model"))

@@ -4,16 +4,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.common.util.toCents
 import br.com.finquest.core.domain.AddGoalUseCase
 import br.com.finquest.core.model.data.Goal
-import br.com.finquest.features.home.ui.addgoal.AddGoalUiState.Companion.BottomSheetType
+import br.com.finquest.core.utils.BalanceFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class AddGoalViewModel(
     private val addGoalUseCase: AddGoalUseCase
@@ -22,37 +22,20 @@ class AddGoalViewModel(
     private val _uiState = MutableStateFlow(AddGoalUiState())
     val uiState: StateFlow<AddGoalUiState> = _uiState
 
+    private val formatInput = BalanceFormatter()
+
     fun setName(name: String) {
         _uiState.update { it.copy(name = name) }
     }
 
     fun setBalance(balance: String) {
-        val numericValue = if (uiState.value.bottomSheetType == BottomSheetType.BALANCE) {
-            uiState.value.balance.replace("\\D".toRegex(), "")
+        val currentValue = if (uiState.value.bottomSheetType == BottomSheetType.BALANCE) {
+            uiState.value.balance
         } else {
-            uiState.value.currentBalance.replace("\\D".toRegex(), "")
+            uiState.value.currentBalance
         }
 
-        val updatedValue = when (balance) {
-            "DEL" -> {
-                if (numericValue.isNotEmpty()) {
-                    numericValue.dropLast(1)
-                } else ""
-            }
-
-            else -> {
-                numericValue + balance
-            }
-        }
-
-        val formattedValue = if (updatedValue.isNotEmpty()) {
-            val parsedValue = updatedValue.toLong()
-            String.format(
-                Locale("pt", "BR"),
-                "%,.2f",
-                parsedValue / 100.0
-            ).replace('.', ',')
-        } else "R$ 0,00"
+        val formattedValue = formatInput.formatInput(currentValue, balance)
 
         _uiState.update {
             if (uiState.value.bottomSheetType == BottomSheetType.BALANCE) {
@@ -67,8 +50,12 @@ class AddGoalViewModel(
         _uiState.update { it.copy(currentBalance = currentBalance) }
     }
 
-    fun setDate(date: String) {
-        _uiState.update { it.copy(date = date) }
+    fun setDeadline(date: String) {
+        _uiState.update { it.copy(deadline = date) }
+    }
+
+    fun openDateDialog(open: Boolean) {
+        _uiState.update { it.copy(openDateDialog = open) }
     }
 
     fun setIcon(icon: Int) {
@@ -123,7 +110,7 @@ class AddGoalViewModel(
                     color = uiState.value.color.toArgb(),
                     targetAmount = uiState.value.balance.toCents(),
                     savedAmount = uiState.value.currentBalance.toCents(),
-                    deadline = uiState.value.date,
+                    deadline = uiState.value.deadline,
                     status = GoalEnum.IN_PROGRESS.value
                 )
             )
