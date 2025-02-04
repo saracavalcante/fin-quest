@@ -27,9 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +50,9 @@ import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
 import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun AddGoalScreen(
@@ -75,7 +75,6 @@ fun AddGoalScreen(
     viewModel: AddGoalViewModel,
     navigateToHome: () -> Unit = {}
 ) {
-    var isChecked by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
     Column(
@@ -142,10 +141,11 @@ fun AddGoalScreen(
     if (state.openDateDialog) {
         DateDialog(
             state = datePickerState,
-            onConfirm = {
-                datePickerState.selectedDateMillis?.let {
-                    viewModel.setDeadline(it.toString())
-                }
+            onConfirm = { dateMillis ->
+                val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    .format(Date(dateMillis))
+
+                viewModel.setDeadline(formattedDate)
                 viewModel.openDateDialog(false)
             },
             onDismissRequest = {

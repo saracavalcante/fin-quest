@@ -85,7 +85,9 @@ fun GoalDetailsScreen(
     onEditClick: (Goal) -> Unit
 ) {
     val progress = state.goal?.let { goal ->
-        (goal.savedAmount.toFloat() / goal.targetAmount.toFloat()) * 100
+        (goal.targetAmount?.toFloat()?.let {
+            goal.savedAmount?.toFloat()?.div(it)
+        })?.times(100)
     } ?: 0f
 
     Scaffold(
@@ -144,7 +146,7 @@ fun GoalDetailsScreen(
 @Composable
 fun SavingsRecommendation(state: GoalDetailsUiState) {
     val startDate = LocalDate.now()
-    val remainingAmount = state.goal?.targetAmount?.minus(state.goal.savedAmount) ?: 0
+    val remainingAmount = state.goal?.targetAmount?.minus(state.goal.savedAmount ?: 0) ?: 0
 
     val monthsRemaining = if (state.goal?.deadline?.isNotBlank() == true) {
         val period = Period.between(startDate, state.goal.deadline.toLocalDate())
@@ -235,7 +237,7 @@ private fun GoalContent(
             )
             Text(
                 text = "R$ ${
-                    (state.goal?.targetAmount?.minus(state.goal.savedAmount))?.coerceAtLeast(
+                    (state.goal?.targetAmount?.minus(state.goal.savedAmount ?: 0))?.coerceAtLeast(
                         0
                     )?.toMoneyString()
                 }",

@@ -20,13 +20,13 @@ data class GoalEntity(
 
 fun Goal.asEntity() = GoalEntity(
     id = id,
-    name = name,
-    icon = icon,
-    color = color,
-    targetAmount = targetAmount,
-    savedAmount = savedAmount,
+    name = name ?: "",
+    icon = icon ?: 0,
+    color = color ?: 0,
+    targetAmount = targetAmount ?: 0,
+    savedAmount = savedAmount ?: 0,
     deadline = deadline,
-    status = status,
+    status = status ?: "",
     isPinned = isPinned
 )
 

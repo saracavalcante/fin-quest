@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,6 +40,11 @@ import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.ui.R
 import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.TopAppBar
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun EditGoalScreen(
@@ -91,7 +95,10 @@ private fun EditGoalScreen(
                 onClick = {
                     if (state.balance.isEmpty()) {
                         viewModel.setAmountError()
-                    } else { }
+                    } else {
+                        viewModel.updateGoal(goal = goal)
+                        onClick()
+                    }
                 }
             )
         }
@@ -107,13 +114,13 @@ private fun EditGoalScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(color = Color(goal.color))
+                    .background(color = Color(goal.color ?: 0))
                     .padding(vertical = 24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     modifier = Modifier.size(56.dp),
-                    painter = painterResource(goal.icon),
+                    painter = painterResource(goal.icon ?: 0),
                     contentDescription = "",
                     tint = Color.Black
                 )
@@ -186,10 +193,11 @@ private fun EditGoalScreen(
     if (state.openDateDialog) {
         DateDialog(
             state = datePickerState,
-            onConfirm = {
-                datePickerState.selectedDateMillis?.let {
-                    viewModel.setDeadline(it.toString())
-                }
+            onConfirm = { dateMillis ->
+                val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    .format(Date(dateMillis))
+
+                viewModel.setDeadline(formattedDate)
                 viewModel.openDateDialog(false)
             },
             onDismissRequest = {
@@ -199,6 +207,7 @@ private fun EditGoalScreen(
     }
 }
 
+/*
 @Preview
 @Composable
 private fun PreviewScreen() {
@@ -216,4 +225,4 @@ private fun PreviewScreen() {
         ),
         onClick = {}
     )
-}
+}*/

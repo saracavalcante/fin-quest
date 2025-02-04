@@ -163,7 +163,7 @@ fun GoalContent(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(goal.color)
+            containerColor = Color(goal.color ?: 0)
         ),
         onClick = onClick
     ) {
@@ -175,7 +175,7 @@ fun GoalContent(
         ) {
             Icon(
                 modifier = Modifier.size(28.dp),
-                painter = painterResource(goal.icon),
+                painter = painterResource(goal.icon ?: 0),
                 contentDescription = "",
                 tint = Color.Black
             )
@@ -186,7 +186,7 @@ fun GoalContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = goal.name,
+                        text = goal.name ?: "",
                         fontFamily = FontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -208,7 +208,7 @@ fun GoalContent(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "R$ ${goal.savedAmount.toMoneyString()} de R$ ${goal.targetAmount.toMoneyString()}",
+                    text = "R$ ${goal.savedAmount?.toMoneyString()} de R$ ${goal.targetAmount?.toMoneyString()}",
                     fontFamily = FontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
@@ -216,8 +216,9 @@ fun GoalContent(
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(
                     progress = {
-                        (goal.savedAmount.toFloat() / goal.targetAmount.toFloat())
-                            .coerceIn(0f, 1f)
+                        (goal.targetAmount?.toFloat()?.let {
+                            goal.savedAmount?.toFloat()?.div(it)
+                        })?.coerceIn(0f, 1f) ?: 0f
                     },
                     modifier = Modifier
                         .fillMaxWidth()

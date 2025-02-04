@@ -1,6 +1,5 @@
 package br.com.finquest.core.common.util
 
-import java.awt.Color
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -22,10 +21,10 @@ fun String?.toLocalDate(): LocalDate? {
     if (this.isNullOrBlank()) {
         return null
     }
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     return try {
-        LocalDate.parse(this, dateFormatter)
+        this.let { LocalDate.parse(it, dateFormatter) }
     } catch (e: Exception) {
         null
     }

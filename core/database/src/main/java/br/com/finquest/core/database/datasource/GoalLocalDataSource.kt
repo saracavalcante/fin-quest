@@ -33,7 +33,9 @@ class GoalLocalDataSourceImpl(private val goalDao: GoalDao) : GoalLocalDataSourc
         goalDao.updateGoal(updateGoal.asEntity())
     }
 
-    override suspend fun updateGoal(goal: Goal) = goalDao.updateGoal(goal.asEntity())
+    override suspend fun updateGoal(goal: Goal) {
+        goalDao.updateGoal(goal.asEntity())
+    }
 
     override suspend fun deleteGoal(id: Int) = goalDao.deleteGoal(id)
 }

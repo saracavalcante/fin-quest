@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.edit
 
+import android.net.Uri
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -14,7 +15,7 @@ internal const val EDIT_GOAL_ROUTE = "edit_goal/{$GOAL_ARG}"
 
 fun NavController.navigateToEditGoal(goal: Goal) {
     val gson = Gson().toJson(goal)
-    navigate(EDIT_GOAL_ROUTE.replace("{$GOAL_ARG}", gson))
+    navigate(EDIT_GOAL_ROUTE.replace("{$GOAL_ARG}", Uri.encode(gson)))
 }
 
 fun NavGraphBuilder.editGoalScreen(

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun DateDialog(
     modifier: Modifier = Modifier,
     state: DatePickerState,
-    onConfirm: () -> Unit,
+    onConfirm: (Long) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     DatePickerDialog(
@@ -29,10 +29,17 @@ fun DateDialog(
         colors = DatePickerDefaults.colors(
             containerColor = Color.White
         ),
-        confirmButton = { ConfirmContent(
-            onConfirm = onConfirm,
-            onDismissRequest = onDismissRequest
-        ) },
+        confirmButton = {
+            ConfirmContent(
+                onConfirm = {
+                    val selectedDateMillis = state.selectedDateMillis
+                    if (selectedDateMillis != null) {
+                        onConfirm(selectedDateMillis)
+                    }
+                },
+                onDismissRequest = onDismissRequest
+            )
+        },
         onDismissRequest = onDismissRequest
     ) {
         DatePicker(
