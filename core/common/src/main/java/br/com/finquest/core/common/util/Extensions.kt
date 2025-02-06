@@ -1,7 +1,10 @@
 package br.com.finquest.core.common.util
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 fun String.toCents(): Long {
     return this.replace(".", "")
@@ -28,4 +31,9 @@ fun String?.toLocalDate(): LocalDate? {
     } catch (e: Exception) {
         null
     }
+}
+
+fun Long.toFormattedDate(pattern: String = "dd/MM/yyyy"): String {
+    val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+    return dateFormat.format(Date(this))
 }

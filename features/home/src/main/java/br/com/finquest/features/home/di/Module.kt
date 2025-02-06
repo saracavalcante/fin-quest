@@ -8,8 +8,8 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val featureModule = module {
-    viewModel { GoalsViewModel(get(), get()) }
+    viewModel { GoalsViewModel(get(), get(), get()) }
     viewModel { AddGoalViewModel(get()) }
-    viewModel { GoalDetailsViewModel(get(), get(), get()) }
+    viewModel { GoalDetailsViewModel(get(), get()) }
     viewModel { EditGoalViewModel(get()) }
 }

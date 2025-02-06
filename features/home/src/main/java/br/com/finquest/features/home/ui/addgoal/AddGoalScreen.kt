@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.common.enums.BottomSheetType
+import br.com.finquest.core.common.util.toFormattedDate
 import br.com.finquest.core.components.CustomOutlinedTextField
 import br.com.finquest.core.components.DateDialog
 import br.com.finquest.core.theme.FontFamily
@@ -50,9 +51,6 @@ import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
 import br.com.finquest.features.home.ui.components.BalanceBottomSheet
 import br.com.finquest.features.home.ui.components.CustomizationBottomSheet
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun AddGoalScreen(
@@ -142,10 +140,7 @@ fun AddGoalScreen(
         DateDialog(
             state = datePickerState,
             onConfirm = { dateMillis ->
-                val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    .format(Date(dateMillis))
-
-                viewModel.setDeadline(formattedDate)
+                viewModel.setDeadline(dateMillis.toFormattedDate())
                 viewModel.openDateDialog(false)
             },
             onDismissRequest = {

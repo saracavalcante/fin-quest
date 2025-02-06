@@ -1,5 +1,6 @@
 package br.com.finquest.core.database.datasource
 
+import android.util.Log
 import br.com.finquest.core.database.dao.GoalDao
 import br.com.finquest.core.database.model.asEntity
 import br.com.finquest.core.database.model.asModel
@@ -37,5 +38,11 @@ class GoalLocalDataSourceImpl(private val goalDao: GoalDao) : GoalLocalDataSourc
         goalDao.updateGoal(goal.asEntity())
     }
 
-    override suspend fun deleteGoal(id: Int) = goalDao.deleteGoal(id)
+    override suspend fun deleteGoal(id: Int) {
+        try {
+            goalDao.deleteGoal(id)
+        } catch (e: Exception) {
+            Log.d("DELETE GOAL", "deleteGoal: Error delete ${e.message}")
+        }
+    }
 }

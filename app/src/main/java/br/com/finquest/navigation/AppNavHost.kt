@@ -6,13 +6,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import br.com.finquest.features.home.ui.addgoal.addGoalScreen
-import br.com.finquest.features.home.ui.addgoal.navigateToGoals
 import br.com.finquest.features.home.ui.details.goalDetailsScreen
 import br.com.finquest.features.home.ui.details.navigateToDetails
 import br.com.finquest.features.home.ui.edit.editGoalScreen
 import br.com.finquest.features.home.ui.edit.navigateToEditGoal
 import br.com.finquest.features.home.ui.goals.GOALS_ROUTE
 import br.com.finquest.features.home.ui.goals.goalsScreen
+import br.com.finquest.features.home.ui.goals.navigateToGoals
 import br.com.finquest.features.home.ui.history.historyScreen
 
 @Composable

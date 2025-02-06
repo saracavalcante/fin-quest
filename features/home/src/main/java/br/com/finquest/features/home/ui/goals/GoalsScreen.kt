@@ -24,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +41,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.common.util.toMoneyString
+import br.com.finquest.core.components.BaseDialog
+import br.com.finquest.core.components.DefaultButton
+import br.com.finquest.core.components.OutlineButton
+import br.com.finquest.core.components.SwipeToRevealCard
 import br.com.finquest.core.model.data.Goal
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
@@ -51,7 +56,7 @@ fun GoalsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.goals) {
+    LaunchedEffect(Unit) {
         viewModel.getGoals()
     }
 
@@ -60,6 +65,18 @@ fun GoalsScreen(
         viewModel = viewModel,
         onClick = onGoalClick
     )
+
+    if (state.showDeleteDialog) {
+        DeleteDialog(
+            viewModel = viewModel,
+            onDismissRequest = {
+                viewModel.showDeleteDialog(
+                    id = null,
+                    show = false
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -69,6 +86,7 @@ private fun GoalsScreen(
     onClick: (Int?) -> Unit
 ) {
     val filteredGoals = state.goals.filter { it.status == state.filter.value }
+    val revealedGoals by viewModel.revealedIds.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -103,18 +121,53 @@ private fun GoalsScreen(
                 }
             } else {
                 items(state.goals.filter { it.status == state.filter.value }) { item ->
-                    GoalContent(
+                    ListContent(
                         goal = item,
                         viewModel = viewModel,
-                        onClick = {
-                            onClick(item.id)
-                        }
+                        revealedGoals = revealedGoals,
+                        onClick = { onClick(it) }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
     }
+}
+
+@Composable
+fun ListContent(
+    goal: Goal,
+    revealedGoals: List<Int>,
+    viewModel: GoalsViewModel,
+    onClick: (Int?) -> Unit
+) {
+    SwipeToRevealCard(
+        isRevealed = revealedGoals.contains(goal.id),
+        actions = {
+            IconButton(
+                onClick = {
+                    goal.id?.let {
+                        viewModel.showDeleteDialog(id = it, show = true)
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete),
+                    contentDescription = "",
+                    tint = Color.Black
+                )
+            }
+        },
+        content = {
+            GoalContent(
+                goal = goal,
+                viewModel = viewModel,
+                onClick = { onClick(goal.id) }
+            )
+        },
+        onExpanded = { viewModel.onItemExpanded(goal.id) },
+        onCollapsed = { viewModel.onItemCollapsed(goal.id) }
+    )
 }
 
 @Composable
@@ -256,6 +309,59 @@ fun EmptyState() {
             fontSize = 14.sp,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@Composable
+fun DeleteDialog(
+    viewModel: GoalsViewModel,
+    onDismissRequest: () -> Unit
+) {
+    BaseDialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Icon(
+            modifier = Modifier.size(36.dp),
+            painter = painterResource(R.drawable.ic_warning),
+            contentDescription = null,
+            tint = Color.Black
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Tem certeza que deseja excluir?",
+            fontFamily = FontFamily,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Você não poderá recuperar\na meta depois.",
+            fontFamily = FontFamily,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlineButton(
+                modifier = Modifier.weight(1f),
+                text = "Cancelar",
+                onClick = onDismissRequest
+            )
+            DefaultButton(
+                modifier = Modifier.weight(1f),
+                text = "Continuar",
+                onClick = {
+                    viewModel.deleteGoal()
+                    viewModel.showDeleteDialog(show = false)
+                }
+            )
+        }
     }
 }
 

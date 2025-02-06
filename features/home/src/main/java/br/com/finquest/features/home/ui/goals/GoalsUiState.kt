@@ -7,5 +7,7 @@ data class GoalsUiState(
     val goals: List<Goal> = listOf(),
     val isLoading: Boolean = false,
     val filter: GoalEnum = GoalEnum.IN_PROGRESS,
+    val goalToDelete: Int? = null,
+    val showDeleteDialog: Boolean = false,
     val error: Throwable? = null
 )

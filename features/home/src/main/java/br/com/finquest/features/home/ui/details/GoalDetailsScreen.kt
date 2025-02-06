@@ -62,14 +62,6 @@ fun GoalDetailsScreen(
         onEditClick = onEditClick
     )
 
-    if (state.showDeleteDialog) {
-        DeleteDialog(
-            viewModel = viewModel,
-            onDismissRequest = { viewModel.showDeleteDialog(false) },
-            navigateBack = onBackClick
-        )
-    }
-
     if (state.showPauseDialog) {
         PauseDialog {
             viewModel.showPauseDialog(false)
@@ -284,16 +276,6 @@ private fun TopAppBarContent(
                     modifier = Modifier.clickable(
                         indication = null,
                         interactionSource = null,
-                        onClick = { viewModel.showDeleteDialog(true) }
-                    ),
-                    painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = null,
-                    tint = Color.Black
-                )
-                Icon(
-                    modifier = Modifier.clickable(
-                        indication = null,
-                        interactionSource = null,
                         onClick = { viewModel.showPauseDialog(true) }
                     ),
                     painter = painterResource(R.drawable.ic_pause),
@@ -303,60 +285,6 @@ private fun TopAppBarContent(
             }
         }
     )
-}
-
-@Composable
-fun DeleteDialog(
-    viewModel: GoalDetailsViewModel,
-    onDismissRequest: () -> Unit,
-    navigateBack: () -> Unit
-) {
-    BaseDialog(
-        onDismissRequest = onDismissRequest
-    ) {
-        Icon(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(R.drawable.ic_warning),
-            contentDescription = null,
-            tint = Color.Black
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Tem certeza que deseja excluir?",
-            fontFamily = FontFamily,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Você não poderá recuperar\na meta depois.",
-            fontFamily = FontFamily,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlineButton(
-                modifier = Modifier.weight(1f),
-                text = "Cancelar",
-                onClick = onDismissRequest
-            )
-            DefaultButton(
-                modifier = Modifier.weight(1f),
-                text = "Continuar",
-                onClick = {
-                    navigateBack()
-                    viewModel.deleteGoal()
-                }
-            )
-        }
-    }
 }
 
 @Composable
