@@ -9,7 +9,7 @@ interface GoalRepository {
     suspend fun insertGoal(goal: Goal)
     suspend fun getGoalById(id: Int): Flow<Goal>
     suspend fun updatePinStatus(goal: Goal)
-    suspend fun updateGoal(goal: Goal)
+    suspend fun updateGoal(goal: Goal?)
     suspend fun deleteGoal(id: Int)
 }
 
@@ -25,7 +25,7 @@ class GoalRepositoryImpl(
 
     override suspend fun updatePinStatus(goal: Goal) = dataSource.updatePinStatus(goal)
 
-    override suspend fun updateGoal(goal: Goal) = dataSource.updateGoal(goal)
+    override suspend fun updateGoal(goal: Goal?) = dataSource.updateGoal(goal)
 
     override suspend fun deleteGoal(id: Int) = dataSource.deleteGoal(id)
 }

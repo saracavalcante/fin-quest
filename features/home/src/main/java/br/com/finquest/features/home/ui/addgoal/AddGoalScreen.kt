@@ -266,7 +266,7 @@ fun GoalContent(
             onValueChange = { viewModel.setName(it) },
             placeholder = "Nome",
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
+                imeAction = ImeAction.Done,
                 keyboardType = KeyboardType.Text
             )
         )

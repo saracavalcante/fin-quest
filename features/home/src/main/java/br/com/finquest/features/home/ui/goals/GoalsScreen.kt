@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.goals
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -143,6 +144,7 @@ fun ListContent(
 ) {
     SwipeToRevealCard(
         isRevealed = revealedGoals.contains(goal.id),
+        actionCount = 2,
         actions = {
             IconButton(
                 onClick = {
@@ -153,6 +155,15 @@ fun ListContent(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_delete),
+                    contentDescription = "",
+                    tint = Color.Black
+                )
+            }
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_pause_circle),
                     contentDescription = "",
                     tint = Color.Black
                 )
@@ -212,11 +223,18 @@ fun GoalContent(
         label = ""
     )
 
+    val color by animateColorAsState(
+        targetValue = if (goal.isPaused) Color.Gray else Color.Black,
+        label = ""
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
+        enabled = !goal.isPaused,
         colors = CardDefaults.cardColors(
-            containerColor = Color(goal.color ?: 0)
+            containerColor = Color(goal.color ?: 0),
+            disabledContainerColor = Color.LightGray
         ),
         onClick = onClick
     ) {
@@ -230,7 +248,7 @@ fun GoalContent(
                 modifier = Modifier.size(28.dp),
                 painter = painterResource(goal.icon ?: 0),
                 contentDescription = "",
-                tint = Color.Black
+                tint = color
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -250,13 +268,14 @@ fun GoalContent(
                             .clickable(
                                 interactionSource = null,
                                 indication = null,
+                                enabled = !goal.isPaused,
                                 onClick = {
                                     viewModel.togglePin(goal)
                                 }
                             ),
                         painter = painterResource(icon),
                         contentDescription = "",
-                        tint = Color.Black
+                        tint = color
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -266,6 +285,15 @@ fun GoalContent(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
                 )
+                goal.deadline?.let { deadline ->
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = deadline,
+                        fontFamily = FontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(
                     progress = {
@@ -276,7 +304,7 @@ fun GoalContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
-                    color = Color.Black,
+                    color = color,
                     trackColor = Color.White,
                     drawStopIndicator = {}
                 )

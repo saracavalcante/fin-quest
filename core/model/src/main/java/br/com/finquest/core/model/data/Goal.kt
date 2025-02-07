@@ -9,5 +9,6 @@ data class Goal(
     val savedAmount: Long? = null,
     val deadline: String? = null,
     val status: String? = null,
-    val isPinned: Boolean = false
+    val isPinned: Boolean = false,
+    val isPaused: Boolean = false
 )

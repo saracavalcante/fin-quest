@@ -13,7 +13,7 @@ val databaseModule = module {
             androidContext(),
             FinQuestDataBase::class.java,
             "finquest_database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     factory { get<FinQuestDataBase>().goalDao() }

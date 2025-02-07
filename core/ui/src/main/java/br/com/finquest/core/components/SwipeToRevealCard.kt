@@ -32,12 +32,15 @@ const val MIN_DRAG_AMOUNT = 6
 fun SwipeToRevealCard(
     modifier: Modifier = Modifier,
     isRevealed: Boolean,
-    cardOffset: Float = 168f,
+    actionCount: Int,
     onExpanded: () -> Unit,
     onCollapsed: () -> Unit,
     actions: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
+    val iconSize = 48.dp
+    val iconSpacing = 16.dp
+    val totalOffset = (iconSize + iconSpacing) * actionCount
     val transitionState = remember {
         MutableTransitionState(isRevealed).apply {
             targetState = !isRevealed
@@ -55,7 +58,7 @@ fun SwipeToRevealCard(
         label = "",
         transitionSpec = { tween(durationMillis = ANIMATE_DURATION) },
         targetValueByState = {
-            if (isRevealed) -cardOffset else 0f
+            if (isRevealed) -totalOffset.value else 0f
         }
     )
 

@@ -61,12 +61,6 @@ fun GoalDetailsScreen(
         onBackClick = onBackClick,
         onEditClick = onEditClick
     )
-
-    if (state.showPauseDialog) {
-        PauseDialog {
-            viewModel.showPauseDialog(false)
-        }
-    }
 }
 
 @Composable
@@ -132,6 +126,16 @@ fun GoalDetailsScreen(
             Spacer(modifier = Modifier.height(36.dp))
             SavingsRecommendation(state = state)
         }
+    }
+
+    if (state.showPauseDialog) {
+        PauseDialog(
+            onPauseClick = {
+                viewModel.pauseGoal(true)
+                onBackClick()
+            },
+            onDismissRequest = { viewModel.showPauseDialog(false) }
+        )
     }
 }
 
@@ -289,6 +293,7 @@ private fun TopAppBarContent(
 
 @Composable
 fun PauseDialog(
+    onPauseClick: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     BaseDialog(
@@ -330,7 +335,7 @@ fun PauseDialog(
             DefaultButton(
                 modifier = Modifier.weight(1f),
                 text = "Pausar",
-                onClick = {}
+                onClick = onPauseClick
             )
         }
     }

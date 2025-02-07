@@ -15,7 +15,8 @@ data class GoalEntity(
     val savedAmount: Long,
     val deadline: String?,
     val status: String,
-    val isPinned: Boolean = false
+    val isPinned: Boolean = false,
+    val isPaused: Boolean = false
 )
 
 fun Goal.asEntity() = GoalEntity(
@@ -27,7 +28,8 @@ fun Goal.asEntity() = GoalEntity(
     savedAmount = savedAmount ?: 0,
     deadline = deadline,
     status = status ?: "",
-    isPinned = isPinned
+    isPinned = isPinned,
+    isPaused = isPaused
 )
 
 fun GoalEntity.asModel() = Goal(
@@ -39,5 +41,6 @@ fun GoalEntity.asModel() = Goal(
     savedAmount = savedAmount,
     deadline = deadline,
     status = status,
-    isPinned = isPinned
+    isPinned = isPinned,
+    isPaused = isPaused
 )
