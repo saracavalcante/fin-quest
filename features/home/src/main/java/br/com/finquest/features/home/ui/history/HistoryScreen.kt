@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.history
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,11 +36,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
 
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(
+    viewModel: HistoryViewModel
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getGoals()
+    }
+
+    HistoryScreen(state)
+}
+
+@Composable
+fun HistoryScreen(
+    state: HistoryUiState
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,7 +71,7 @@ fun HistoryScreen() {
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
-        FilterContent()
+        FilterContent(state = state)
         Text(
             text = "Janeiro",
             fontFamily = FontFamily
@@ -67,44 +85,50 @@ fun HistoryScreen() {
 
 @Composable
 fun FilterContent(
+    state: HistoryUiState,
     onItemClick: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Testando", "Testando")
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopEnd)
-            .clickable { expanded = true }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+    AnimatedVisibility(visible = state.goals.isNotEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.TopEnd)
+                .clickable { expanded = true }
         ) {
-            Icon(
-                modifier = Modifier.size(18.dp),
-                painter = painterResource(R.drawable.ic_filter),
-                contentDescription = "",
-                tint = Color(0xFFBCBCBC)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Filtrar",
-                fontFamily = FontFamily,
-                color = Color(0xFFBCBCBC)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            containerColor = Color(0xFFF5F5F5),
-            onDismissRequest = { expanded = false }
-        ) {
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(text = item) },
-                    onClick = onItemClick
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(R.drawable.ic_filter),
+                    contentDescription = "",
+                    tint = Color(0xFFBCBCBC)
                 )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Filtrar",
+                    fontFamily = FontFamily,
+                    color = Color(0xFFBCBCBC)
+                )
+            }
+            DropdownMenu(
+                expanded = expanded,
+                containerColor = Color(0xFFF5F5F5),
+                onDismissRequest = { expanded = false }
+            ) {
+                state.goals.forEach { item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = item.name ?: "",
+                                fontFamily = FontFamily
+                            )
+                        },
+                        onClick = onItemClick
+                    )
+                }
             }
         }
     }
@@ -157,5 +181,5 @@ fun HistoryItem(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun ScreenPreview() {
-    HistoryScreen()
+    HistoryScreen(state = HistoryUiState())
 }

@@ -3,6 +3,7 @@ package br.com.finquest.features.home.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,31 +33,36 @@ fun TopAppBar(
     actions: @Composable (RowScope.() -> Unit) = {},
     onBackClick: () -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(55.dp)
-            .background(Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(
-            modifier = Modifier.clickable(
-                indication = null,
-                interactionSource = null,
-                onClick = { onBackClick() }
-            ),
-            painter = painterResource(R.drawable.ic_arrow_left),
-            tint = Color.Black,
-            contentDescription = ""
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = text,
-            fontFamily = FontFamily,
-            fontSize = 16.sp
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        actions()
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(55.dp)
+                .background(Color.Transparent),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = null,
+                    onClick = { onBackClick() }
+                ),
+                painter = painterResource(R.drawable.ic_arrow_left),
+                tint = Color.Black,
+                contentDescription = ""
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = text,
+                fontFamily = FontFamily,
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            actions()
+        }
+        HorizontalDivider(color = Color(0xFFF5F5F5))
     }
 }
 

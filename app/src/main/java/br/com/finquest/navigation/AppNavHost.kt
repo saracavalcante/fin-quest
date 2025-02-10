@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import br.com.finquest.features.home.ui.addamount.addAmountScreen
+import br.com.finquest.features.home.ui.addamount.navigateToAddAmount
 import br.com.finquest.features.home.ui.addgoal.addGoalScreen
 import br.com.finquest.features.home.ui.details.goalDetailsScreen
 import br.com.finquest.features.home.ui.details.navigateToDetails
@@ -35,9 +37,15 @@ fun AppNavHost(navController: NavHostController) {
             onBackClick = navController::popBackStack,
             onEditClick = {
                 navController.navigateToEditGoal(it)
+            },
+            onAddClick = {
+                navController.navigateToAddAmount(it)
             }
         )
         editGoalScreen(
+            onBackClick = navController::popBackStack
+        )
+        addAmountScreen(
             onBackClick = navController::popBackStack
         )
     }

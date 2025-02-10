@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.common.enums.GoalEnum
+import br.com.finquest.core.common.util.currentDate
 import br.com.finquest.core.common.util.toMoneyString
 import br.com.finquest.core.components.BaseDialog
 import br.com.finquest.core.components.DefaultButton
@@ -87,7 +88,6 @@ private fun GoalsScreen(
     onClick: (Int?) -> Unit
 ) {
     val filteredGoals = state.goals.filter { it.status == state.filter.value }
-    val revealedGoals by viewModel.revealedIds.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -103,7 +103,7 @@ private fun GoalsScreen(
             fontSize = 24.sp
         )
         Text(
-            text = "dom., 12 de janeiro",
+            text = currentDate(),
             fontFamily = FontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp
@@ -125,7 +125,6 @@ private fun GoalsScreen(
                     ListContent(
                         goal = item,
                         viewModel = viewModel,
-                        revealedGoals = revealedGoals,
                         onClick = { onClick(it) }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -138,32 +137,27 @@ private fun GoalsScreen(
 @Composable
 fun ListContent(
     goal: Goal,
-    revealedGoals: List<Int>,
     viewModel: GoalsViewModel,
     onClick: (Int?) -> Unit
 ) {
     SwipeToRevealCard(
-        isRevealed = revealedGoals.contains(goal.id),
-        actionCount = 2,
-        actions = {
-            IconButton(
-                onClick = {
+        actions = listOf {
+            Icon(
+                modifier = Modifier.clickable {
                     goal.id?.let {
                         viewModel.showDeleteDialog(id = it, show = true)
                     }
-                }
-            ) {
+                },
+                painter = painterResource(R.drawable.ic_delete),
+                contentDescription = "",
+                tint = Color.Black
+            )
+            if (goal.isPaused) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_delete),
-                    contentDescription = "",
-                    tint = Color.Black
-                )
-            }
-            IconButton(
-                onClick = {}
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_pause_circle),
+                    modifier = Modifier.clickable {
+                        viewModel.resumeGoal(goal)
+                    },
+                    painter = painterResource(R.drawable.ic_pause),
                     contentDescription = "",
                     tint = Color.Black
                 )
@@ -175,9 +169,7 @@ fun ListContent(
                 viewModel = viewModel,
                 onClick = { onClick(goal.id) }
             )
-        },
-        onExpanded = { viewModel.onItemExpanded(goal.id) },
-        onCollapsed = { viewModel.onItemCollapsed(goal.id) }
+        }
     )
 }
 
@@ -285,14 +277,24 @@ fun GoalContent(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
                 )
-                goal.deadline?.let { deadline ->
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = deadline,
-                        fontFamily = FontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp
-                    )
+                if (!goal.deadline.isNullOrBlank()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Data limite:",
+                            fontFamily = FontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = goal.deadline ?: "",
+                            fontFamily = FontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 LinearProgressIndicator(

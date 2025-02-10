@@ -22,7 +22,8 @@ fun NavController.navigateToDetails(id: String) {
 
 fun NavGraphBuilder.goalDetailsScreen(
     onBackClick: () -> Unit,
-    onEditClick: (Goal) -> Unit
+    onEditClick: (Goal) -> Unit,
+    onAddClick: (Goal) -> Unit
 ) {
     composable(
         route = GOAL_DETAIL_ROUTE
@@ -30,7 +31,8 @@ fun NavGraphBuilder.goalDetailsScreen(
         GoalDetailsScreen(
             viewModel = koinViewModel(),
             onBackClick = onBackClick,
-            onEditClick = onEditClick
+            onEditClick = onEditClick,
+            onAddClick = onAddClick
         )
     }
 }

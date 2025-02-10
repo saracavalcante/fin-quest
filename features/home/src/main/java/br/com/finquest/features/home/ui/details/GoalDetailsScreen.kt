@@ -47,7 +47,8 @@ import java.time.Period
 fun GoalDetailsScreen(
     viewModel: GoalDetailsViewModel,
     onBackClick: () -> Unit,
-    onEditClick: (Goal) -> Unit
+    onEditClick: (Goal) -> Unit,
+    onAddClick: (Goal) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -59,7 +60,8 @@ fun GoalDetailsScreen(
         state = state,
         viewModel = viewModel,
         onBackClick = onBackClick,
-        onEditClick = onEditClick
+        onEditClick = onEditClick,
+        onAddClick = onAddClick
     )
 }
 
@@ -68,7 +70,8 @@ fun GoalDetailsScreen(
     state: GoalDetailsUiState,
     viewModel: GoalDetailsViewModel,
     onBackClick: () -> Unit,
-    onEditClick: (Goal) -> Unit
+    onEditClick: (Goal) -> Unit,
+    onAddClick: (Goal) -> Unit
 ) {
     val progress = state.goal?.let { goal ->
         (goal.targetAmount?.toFloat()?.let {
@@ -92,15 +95,18 @@ fun GoalDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
-                text = "Adicionar saldo"
-            ) { }
+                text = "Adicionar saldo",
+                onClick = {
+                    state.goal?.let(onAddClick)
+                }
+            )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp)
+                .padding(24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -254,8 +260,7 @@ private fun TopAppBarContent(
     TopAppBar(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp),
+            .padding(horizontal = 16.dp),
         text = state.goal?.name ?: "",
         onBackClick = onClick,
         actions = {

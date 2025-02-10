@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.finquest.core.common.enums.BottomSheetType
+import br.com.finquest.core.components.AmountInput
 import br.com.finquest.core.components.BaseBottomSheet
 import br.com.finquest.core.components.keyboard.KeyboardContent
 import br.com.finquest.core.theme.FontFamily
@@ -42,7 +43,11 @@ fun BalanceBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            BalanceContent(if (condition) targetAmount else savedAmount)
+            AmountInput(
+                value = if (condition) {
+                    targetAmount
+                } else savedAmount
+            )
             KeyboardContent(
                 onKeyClick = { key ->
                     when (key) {
@@ -51,44 +56,16 @@ fun BalanceBottomSheet(
                             onDelete(balance)
                         }
 
-                        "CHECK" -> { onDismissRequest() }
+                        "CHECK" -> {
+                            onDismissRequest()
+                        }
 
-                        else -> { setBalance(key) }
+                        else -> {
+                            setBalance(key)
+                        }
                     }
                 }
             )
         }
     }
-}
-
-@Composable
-fun BalanceContent(
-    editBalance: String = ""
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "R$",
-            fontFamily = FontFamily,
-            color = Color(0xFFBCBCBC)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = editBalance.ifEmpty { "00,00" },
-            fontFamily = FontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 42.sp,
-            color = Color.Black,
-            maxLines = 1
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewComponent() {
-    BalanceContent()
 }
