@@ -93,10 +93,9 @@ private fun GoalsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-            .padding(horizontal = 24.dp)
+            .padding(24.dp)
     ) {
         Text(
-            modifier = Modifier.padding(top = 60.dp),
             text = "Seja Bem-vindo",
             fontFamily = FontFamily,
             fontWeight = FontWeight.Bold,
@@ -272,7 +271,7 @@ fun GoalContent(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "R$ ${goal.savedAmount?.toMoneyString()} de R$ ${goal.targetAmount?.toMoneyString()}",
+                    text = "${goal.savedAmount?.toMoneyString()} de ${goal.targetAmount?.toMoneyString()}",
                     fontFamily = FontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp

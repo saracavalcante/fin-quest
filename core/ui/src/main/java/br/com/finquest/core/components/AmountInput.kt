@@ -32,7 +32,7 @@ fun AmountInput(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = value.ifEmpty { "00,00" },
+            text = value.ifEmpty { "0,00" },
             fontFamily = FontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 42.sp,

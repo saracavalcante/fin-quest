@@ -36,6 +36,15 @@ class GoalDetailsViewModel(
         }
     }
 
+    fun updateGoalStatus(value: String) {
+        val status = uiState.value.goal?.copy(
+            status = value
+        )
+        viewModelScope.launch {
+            updateGoalUseCase.invoke(status)
+        }
+    }
+
     fun getGoalById() {
         viewModelScope.launch {
             getGoalUseCase.invoke(args.id.toInt()).collect { goal ->

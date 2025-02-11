@@ -46,6 +46,7 @@ import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.common.util.toFormattedDate
 import br.com.finquest.core.components.CustomOutlinedTextField
 import br.com.finquest.core.components.DateDialog
+import br.com.finquest.core.components.DefaultButton
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
 import br.com.finquest.core.utils.dashedBorder
@@ -97,22 +98,15 @@ fun AddGoalScreen(
                 viewModel.openDateDialog(true)
             }
         )
-        Button(
+        DefaultButton(
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color.White
-            ),
+            text = "Criar meta",
+            enabled = state.isEnabled(),
             onClick = {
                 viewModel.addGoal()
                 navigateToHome()
             }
-        ) {
-            Text(
-                text = "Criar meta",
-                fontFamily = FontFamily
-            )
-        }
+        )
     }
 
     if (state.openCustomization) {

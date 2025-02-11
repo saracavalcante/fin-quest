@@ -18,7 +18,12 @@ data class AddGoalUiState(
     val openAddBalance: Boolean = false,
     val bottomSheetType: BottomSheetType = BottomSheetType.NONE,
     val error: Throwable? = null
-)
+) {
+    fun isEnabled(): Boolean {
+        return name.isNotEmpty() &&
+                balance.isNotEmpty()
+    }
+}
 
 object GoalIcons {
     val icons = listOf(

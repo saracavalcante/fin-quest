@@ -15,23 +15,26 @@ import br.com.finquest.core.theme.FontFamily
 fun DefaultButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = true,
     textColor: Color = Color.White,
     containerColor: Color = Color.Black,
-    contentColor: Color = Color.White,
     onClick: () -> Unit
 ) {
+    val color = if (enabled) textColor else Color(0xFFBCBCBC)
+
     Button(
         modifier = modifier,
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            disabledContainerColor = Color(0xF5F5F5F5)
         ),
         onClick = onClick
     ) {
         Text(
             text = text,
             fontFamily = FontFamily,
-            color = textColor
+            color = color
         )
     }
 }

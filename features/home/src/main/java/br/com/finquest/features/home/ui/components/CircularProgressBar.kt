@@ -26,8 +26,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import br.com.finquest.core.theme.FontFamily
+import kotlin.math.min
 
 @Composable
 fun CircularProgressIndicator(
@@ -35,7 +37,7 @@ fun CircularProgressIndicator(
     dataUsage: Float = 60f,
     size: Dp = 200.dp,
     indicatorThickness: Dp = 12.dp,
-    animationDuration: Int = 1000,
+    animationDuration: Int = 1000
 ) {
     var dataUsageRemember by remember { mutableFloatStateOf(0f) }
     val dataUsageAnimate = animateFloatAsState(
@@ -46,7 +48,7 @@ fun CircularProgressIndicator(
     )
 
     LaunchedEffect(dataUsage) {
-        dataUsageRemember = dataUsage
+        dataUsageRemember = min(dataUsage, 100f)
     }
 
     Box(
@@ -77,7 +79,7 @@ fun CircularProgressIndicator(
                 )
             )
 
-            val sweepAngle = (dataUsageAnimate.value) * 300 / 100
+            val sweepAngle = (dataUsageAnimate.value) * 360 / 100
 
             drawArc(
                 color = Color.Black,

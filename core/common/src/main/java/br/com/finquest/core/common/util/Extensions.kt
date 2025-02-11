@@ -1,23 +1,34 @@
 package br.com.finquest.core.common.util
 
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
-fun String.toCents(): Long {
-    return this.replace(".", "")
-        .replace(",", ".")
-        .toBigDecimal()
-        .multiply(100.toBigDecimal())
-        .toLong()
+fun String?.toCents(): Long? {
+    if (this.isNullOrBlank()) return null
+
+    return try {
+        val cleanedValue = this
+            .replace(Regex("[^\\d,]"), "")
+            .replace(Regex("(.*),(.*),"), "$1$2,")
+
+        val locale = Locale.forLanguageTag("pt-BR")
+        val format = NumberFormat.getInstance(locale)
+        val number = format.parse(cleanedValue) ?: return null
+
+        (number.toDouble() * 100).toLong()
+    } catch (e: Exception) {
+        null
+    }
 }
 
 fun Long.toMoneyString(): String {
-    val real = this / 100
-    val cents = this % 100
-    return "%d,%02d".format(real, cents)
+    val locale = Locale.forLanguageTag("pt-BR")
+    val format = NumberFormat.getCurrencyInstance(locale)
+    return format.format(this / 100.0)
 }
 
 fun String?.toLocalDate(): LocalDate? {

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -32,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.finquest.core.components.BaseBottomSheet
+import br.com.finquest.core.components.DefaultButton
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.features.home.ui.addgoal.AddGoalUiState
 import br.com.finquest.features.home.ui.addgoal.AddGoalViewModel
@@ -131,18 +131,11 @@ fun CustomizationBottomSheet(
                     fontFamily = FontFamily
                 )
             }
-            Button(
+            DefaultButton(
                 modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black
-                ),
+                text = "Finalizar",
                 onClick = onDismissRequest
-            ) {
-                Text(
-                    text = "Finalizar",
-                    fontFamily = FontFamily
-                )
-            }
+            )
         }
     }
 }

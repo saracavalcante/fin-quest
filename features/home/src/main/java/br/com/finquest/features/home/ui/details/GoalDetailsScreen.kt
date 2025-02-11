@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.finquest.core.common.enums.GoalEnum
+import br.com.finquest.core.common.enums.GoalEnum.COMPLETED
 import br.com.finquest.core.common.util.toLocalDate
 import br.com.finquest.core.common.util.toMoneyString
 import br.com.finquest.core.components.BaseDialog
@@ -79,6 +81,12 @@ fun GoalDetailsScreen(
         })?.times(100)
     } ?: 0f
 
+    LaunchedEffect(progress) {
+        if (progress >= 100f && state.goal?.status != COMPLETED.value) {
+            viewModel.updateGoalStatus(COMPLETED.value)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -96,6 +104,7 @@ fun GoalDetailsScreen(
                     .fillMaxWidth()
                     .padding(24.dp),
                 text = "Adicionar saldo",
+                enabled = progress < 100f,
                 onClick = {
                     state.goal?.let(onAddClick)
                 }
@@ -119,7 +128,7 @@ fun GoalDetailsScreen(
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "R$ ${state.goal?.targetAmount?.toMoneyString()}",
+                text = "${state.goal?.targetAmount?.toMoneyString()}",
                 fontFamily = FontFamily,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center,
@@ -178,7 +187,7 @@ fun SavingsRecommendation(state: GoalDetailsUiState) {
                 fontFamily = FontFamily,
             )
             Text(
-                text = "R$ ${suggestedMonthlySavings.toMoneyString()}",
+                text = suggestedMonthlySavings.toMoneyString(),
                 fontFamily = FontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp
@@ -225,7 +234,7 @@ private fun GoalContent(
                 fontFamily = FontFamily
             )
             Text(
-                text = "R$ ${state.goal?.savedAmount?.toMoneyString()}",
+                text = "${state.goal?.savedAmount?.toMoneyString()}",
                 fontFamily = FontFamily
             )
         }
@@ -238,7 +247,7 @@ private fun GoalContent(
                 fontFamily = FontFamily
             )
             Text(
-                text = "R$ ${
+                text = "${
                     (state.goal?.targetAmount?.minus(state.goal.savedAmount ?: 0))?.coerceAtLeast(
                         0
                     )?.toMoneyString()

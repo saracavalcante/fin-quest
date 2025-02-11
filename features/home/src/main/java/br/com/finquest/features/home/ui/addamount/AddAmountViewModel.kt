@@ -39,7 +39,7 @@ class AddAmountViewModel(
     fun updateGoal(goal: Goal?) {
         val updatedGoal = goal?.copy(
             savedAmount = goal.savedAmount?.plus(
-                uiState.value.balance.toCents()
+                uiState.value.balance.toCents() ?: 0
             )
         )
         viewModelScope.launch {
