@@ -87,7 +87,7 @@ private fun GoalsScreen(
     viewModel: GoalsViewModel,
     onClick: (Int?) -> Unit
 ) {
-    val filteredGoals = state.goals.filter { it.status == state.filter.value }
+    val filteredGoals = state.goals.filter { it.goal.status == state.filter.value }
 
     Column(
         modifier = Modifier
@@ -120,9 +120,10 @@ private fun GoalsScreen(
                     EmptyState()
                 }
             } else {
-                items(state.goals.filter { it.status == state.filter.value }) { item ->
+                items(filteredGoals) { item ->
                     ListContent(
-                        goal = item,
+                        goal = item.goal,
+                        savedAmount = item.savedAmount ?: 0,
                         viewModel = viewModel,
                         onClick = { onClick(it) }
                     )
@@ -136,6 +137,7 @@ private fun GoalsScreen(
 @Composable
 fun ListContent(
     goal: Goal,
+    savedAmount: Long,
     viewModel: GoalsViewModel,
     onClick: (Int?) -> Unit
 ) {
@@ -165,6 +167,7 @@ fun ListContent(
         content = {
             GoalContent(
                 goal = goal,
+                savedAmount = savedAmount,
                 viewModel = viewModel,
                 onClick = { onClick(goal.id) }
             )
@@ -206,6 +209,7 @@ fun FilterContent(
 @Composable
 fun GoalContent(
     goal: Goal,
+    savedAmount: Long,
     viewModel: GoalsViewModel,
     onClick: () -> Unit = {}
 ) {
@@ -271,7 +275,7 @@ fun GoalContent(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${goal.savedAmount?.toMoneyString()} de ${goal.targetAmount?.toMoneyString()}",
+                    text = "${savedAmount.toMoneyString()} de ${goal.targetAmount?.toMoneyString()}",
                     fontFamily = FontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp
@@ -299,7 +303,7 @@ fun GoalContent(
                 LinearProgressIndicator(
                     progress = {
                         (goal.targetAmount?.toFloat()?.let {
-                            goal.savedAmount?.toFloat()?.div(it)
+                            savedAmount.toFloat().div(it)
                         })?.coerceIn(0f, 1f) ?: 0f
                     },
                     modifier = Modifier

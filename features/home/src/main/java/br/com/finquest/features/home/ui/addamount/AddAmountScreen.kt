@@ -91,7 +91,9 @@ private fun AddAmountScreen(
                         }
 
                         "CHECK" -> {
-                            viewModel.updateGoal(goal)
+                            goal?.id?.let { goalId ->
+                                viewModel.insertTransaction(goalId)
+                            }
                             onBackClick()
                         }
 

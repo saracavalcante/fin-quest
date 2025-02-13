@@ -17,6 +17,7 @@ val databaseModule = module {
     }
 
     factory { get<FinQuestDataBase>().goalDao() }
+    factory { get<FinQuestDataBase>().goalTransactionDao() }
 
-    single<GoalLocalDataSource> { GoalLocalDataSourceImpl(get()) }
+    single<GoalLocalDataSource> { GoalLocalDataSourceImpl(get(), get()) }
 }

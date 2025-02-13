@@ -3,8 +3,8 @@ package br.com.finquest.features.home.ui.addamount
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.finquest.core.common.util.toCents
-import br.com.finquest.core.domain.UpdateGoalUseCase
-import br.com.finquest.core.model.data.Goal
+import br.com.finquest.core.domain.InsertTransactionUseCase
+import br.com.finquest.core.model.data.GoalTransaction
 import br.com.finquest.core.utils.BalanceFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddAmountViewModel(
-    private val updateGoalUseCase: UpdateGoalUseCase
+    private val insertTransactionUseCase: InsertTransactionUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddAmountUiState())
@@ -36,15 +36,13 @@ class AddAmountViewModel(
         }
     }
 
-    fun updateGoal(goal: Goal?) {
-        val updatedGoal = goal?.copy(
-            savedAmount = goal.savedAmount?.plus(
-                uiState.value.balance.toCents() ?: 0
-            )
-        )
+    fun insertTransaction(goalId: Int) {
         viewModelScope.launch {
-            updateGoalUseCase.invoke(
-                goal = updatedGoal
+            insertTransactionUseCase.invoke(
+                transaction = GoalTransaction(
+                    goalId = goalId,
+                    amount = uiState.value.balance.toCents() ?: 0
+                )
             )
         }
     }

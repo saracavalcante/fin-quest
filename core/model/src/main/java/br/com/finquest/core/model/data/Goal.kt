@@ -6,7 +6,6 @@ data class Goal(
     val icon: Int? = null,
     val color: Int? = null,
     val targetAmount: Long? = null,
-    val savedAmount: Long? = null,
     val deadline: String? = null,
     val status: String? = null,
     val isPinned: Boolean = false,

@@ -48,7 +48,9 @@ class GoalDetailsViewModel(
     fun getGoalById() {
         viewModelScope.launch {
             getGoalUseCase.invoke(args.id.toInt()).collect { goal ->
-                _uiState.update { it.copy(goal = goal) }
+                _uiState.update {
+                    it.copy(goal = goal.goal, savedAmount = goal.savedAmount)
+                }
             }
         }
     }

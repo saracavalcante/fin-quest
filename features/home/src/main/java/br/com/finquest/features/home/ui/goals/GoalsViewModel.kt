@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.domain.DeleteGoalUseCase
 import br.com.finquest.core.domain.GetAllGoalsUseCase
+import br.com.finquest.core.domain.GetSavedAmountUseCase
 import br.com.finquest.core.domain.PinGoalUseCase
 import br.com.finquest.core.domain.UpdateGoalUseCase
 import br.com.finquest.core.model.data.Goal
@@ -17,7 +18,8 @@ class GoalsViewModel(
     private val goalsUseCase: GetAllGoalsUseCase,
     private val pinGoalUseCase: PinGoalUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
-    private val updateGoalUseCase: UpdateGoalUseCase
+    private val updateGoalUseCase: UpdateGoalUseCase,
+    private val getSavedAmountUseCase: GetSavedAmountUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GoalsUiState())

@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.common.enums.GoalEnum.COMPLETED
 import br.com.finquest.core.common.util.toLocalDate
 import br.com.finquest.core.common.util.toMoneyString
@@ -77,7 +76,7 @@ fun GoalDetailsScreen(
 ) {
     val progress = state.goal?.let { goal ->
         (goal.targetAmount?.toFloat()?.let {
-            goal.savedAmount?.toFloat()?.div(it)
+            state.savedAmount?.toFloat()?.div(it)
         })?.times(100)
     } ?: 0f
 
@@ -157,7 +156,7 @@ fun GoalDetailsScreen(
 @Composable
 fun SavingsRecommendation(state: GoalDetailsUiState) {
     val startDate = LocalDate.now()
-    val remainingAmount = state.goal?.targetAmount?.minus(state.goal.savedAmount ?: 0) ?: 0
+    val remainingAmount = state.goal?.targetAmount?.minus(state.savedAmount ?: 0) ?: 0
 
     val monthsRemaining = if (state.goal?.deadline?.isNotBlank() == true) {
         val period = Period.between(startDate, state.goal.deadline.toLocalDate())
@@ -234,7 +233,7 @@ private fun GoalContent(
                 fontFamily = FontFamily
             )
             Text(
-                text = "${state.goal?.savedAmount?.toMoneyString()}",
+                text = "${state.savedAmount?.toMoneyString()}",
                 fontFamily = FontFamily
             )
         }
@@ -248,7 +247,7 @@ private fun GoalContent(
             )
             Text(
                 text = "${
-                    (state.goal?.targetAmount?.minus(state.goal.savedAmount ?: 0))?.coerceAtLeast(
+                    (state.goal?.targetAmount?.minus(state.savedAmount ?: 0))?.coerceAtLeast(
                         0
                     )?.toMoneyString()
                 }",

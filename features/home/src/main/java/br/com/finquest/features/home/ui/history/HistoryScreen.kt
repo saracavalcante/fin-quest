@@ -122,7 +122,7 @@ fun FilterContent(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = item.name ?: "",
+                                text = item.goal.name ?: "",
                                 fontFamily = FontFamily
                             )
                         },

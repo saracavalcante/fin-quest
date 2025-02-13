@@ -8,7 +8,9 @@ import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.common.util.toCents
 import br.com.finquest.core.domain.AddGoalUseCase
+import br.com.finquest.core.domain.InsertTransactionUseCase
 import br.com.finquest.core.model.data.Goal
+import br.com.finquest.core.model.data.GoalTransaction
 import br.com.finquest.core.utils.BalanceFormatter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddGoalViewModel(
-    private val addGoalUseCase: AddGoalUseCase
+    private val addGoalUseCase: AddGoalUseCase,
+    private val insertTransactionUseCase: InsertTransactionUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddGoalUiState())
@@ -103,17 +106,26 @@ class AddGoalViewModel(
 
     fun addGoal() {
         viewModelScope.launch {
-            addGoalUseCase.invoke(
-                Goal(
-                    name = uiState.value.name,
-                    icon = uiState.value.icon,
-                    color = uiState.value.color.toArgb(),
-                    targetAmount = uiState.value.balance.toCents(),
-                    savedAmount = uiState.value.currentBalance.toCents(),
-                    deadline = uiState.value.deadline,
-                    status = GoalEnum.IN_PROGRESS.value
-                )
+            val goal = Goal(
+                name = uiState.value.name,
+                icon = uiState.value.icon,
+                color = uiState.value.color.toArgb(),
+                targetAmount = uiState.value.balance.toCents(),
+                deadline = uiState.value.deadline,
+                status = GoalEnum.IN_PROGRESS.value
             )
+
+            val goalId = addGoalUseCase.invoke(goal)
+            val savedAmount = uiState.value.currentBalance.toCents()
+
+            if (savedAmount != null && savedAmount > 0) {
+                insertTransactionUseCase.invoke(
+                    GoalTransaction(
+                        goalId = goalId.toInt(),
+                        amount = savedAmount
+                    )
+                )
+            }
         }
     }
 }
