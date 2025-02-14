@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -33,12 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.finquest.core.common.util.toMoneyString
+import br.com.finquest.core.model.data.GoalTransaction
 import br.com.finquest.core.theme.FontFamily
 import br.com.finquest.core.ui.R
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun HistoryScreen(
@@ -50,19 +53,25 @@ fun HistoryScreen(
         viewModel.getGoals()
     }
 
-    HistoryScreen(state)
+    HistoryScreen(state, viewModel)
 }
 
 @Composable
 fun HistoryScreen(
-    state: HistoryUiState
+    state: HistoryUiState,
+    viewModel: HistoryViewModel
 ) {
+    val transactionsByMonth = state.transactions?.groupBy { transaction ->
+        transaction.dateAdded
+            .format(DateTimeFormatter.ofPattern("MMMM", Locale("pt", "BR")))
+            .replaceFirstChar { it.uppercaseChar() }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
@@ -71,14 +80,22 @@ fun HistoryScreen(
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
-        FilterContent(state = state)
-        Text(
-            text = "Janeiro",
-            fontFamily = FontFamily
-        )
-        repeat(5) {
-            HistoryItem()
-            HorizontalDivider(color = Color(0xFFF5F5F5))
+        FilterContent(state = state, viewModel = viewModel)
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            transactionsByMonth?.forEach { (month, transactions) ->
+                item {
+                    Text(
+                        modifier = Modifier.padding(bottom = 16.dp),
+                        text = month,
+                        fontFamily = FontFamily
+                    )
+                }
+                items(transactions) { transaction ->
+                    HistoryItem(goalTransaction = transaction)
+                }
+            }
         }
     }
 }
@@ -86,7 +103,7 @@ fun HistoryScreen(
 @Composable
 fun FilterContent(
     state: HistoryUiState,
-    onItemClick: () -> Unit = {}
+    viewModel: HistoryViewModel
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -108,7 +125,7 @@ fun FilterContent(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Filtrar",
+                    text = state.filterName ?: "Filtrar",
                     fontFamily = FontFamily,
                     color = Color(0xFFBCBCBC)
                 )
@@ -126,7 +143,9 @@ fun FilterContent(
                                 fontFamily = FontFamily
                             )
                         },
-                        onClick = onItemClick
+                        onClick = {
+                            viewModel.getTransactions(item.goal)
+                        }
                     )
                 }
             }
@@ -135,51 +154,56 @@ fun FilterContent(
 }
 
 @Composable
-fun HistoryItem(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+fun HistoryItem(
+    modifier: Modifier = Modifier,
+    goalTransaction: GoalTransaction
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    Color(0xFFF5F5F5),
-                    RoundedCornerShape(12.dp)
-                )
-                .padding(12.dp),
-            contentAlignment = Alignment.Center
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_payments),
-                contentDescription = "",
-            )
+            Box(
+                modifier = Modifier
+                    .background(
+                        Color(0xFFF5F5F5),
+                        RoundedCornerShape(12.dp)
+                    )
+                    .padding(12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_payments),
+                    contentDescription = "",
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(
+                    text = goalTransaction.dateAdded.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                    fontFamily = FontFamily,
+                    fontSize = 12.sp,
+                    color = Color(0xFFBCBCBC)
+                )
+                Text(
+                    text = "+${goalTransaction.amount?.toMoneyString()}",
+                    fontFamily = FontFamily,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(
-                text = "Carro",
-                fontFamily = FontFamily,
-                fontSize = 12.sp,
-                color = Color(0xFFBCBCBC)
-            )
-            Text(
-                text = "+R$ 100,00",
-                fontFamily = FontFamily,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "21/01/2025",
-            fontFamily = FontFamily,
-            fontSize = 12.sp,
-            color = Color(0xFFBCBCBC)
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = Color(0xFFF5F5F5)
         )
     }
 }
 
+/*
 @Preview
 @Composable
 private fun ScreenPreview() {
     HistoryScreen(state = HistoryUiState())
-}
+}*/

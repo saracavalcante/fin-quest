@@ -14,6 +14,6 @@ val featureModule = module {
     viewModel { AddGoalViewModel(get(), get()) }
     viewModel { GoalDetailsViewModel(get(), get(), get()) }
     viewModel { EditGoalViewModel(get()) }
-    viewModel { HistoryViewModel(get()) }
+    viewModel { HistoryViewModel(get(), get()) }
     viewModel { AddAmountViewModel(get()) }
 }
