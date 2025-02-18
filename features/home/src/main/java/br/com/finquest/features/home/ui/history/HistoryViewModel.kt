@@ -29,13 +29,13 @@ class HistoryViewModel(
         }
     }
 
-    fun getTransactions(gaol: Goal) {
+    fun getTransactions(gaol: Goal?) {
         viewModelScope.launch {
-            getTransactionsForGoalUseCase.invoke(gaol.id.toString()).collect { transactions ->
+            getTransactionsForGoalUseCase.invoke(gaol?.id).collect { transactions ->
                 _uiState.update {
                     it.copy(
                         transactions = transactions,
-                        filterName = gaol.name
+                        filterName = gaol?.name
                     )
                 }
             }

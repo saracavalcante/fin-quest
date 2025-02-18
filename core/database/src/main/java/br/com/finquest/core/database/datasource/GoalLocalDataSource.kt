@@ -20,6 +20,7 @@ interface GoalLocalDataSource {
 
     suspend fun insertTransaction(transaction: GoalTransaction)
     suspend fun getTransactionsForGoal(goalId: String): Flow<List<GoalTransaction>>
+    suspend fun getAllTransactions(): Flow<List<GoalTransaction>>
     suspend fun getSavedAmount(goalId: Int): Long?
 }
 
@@ -28,16 +29,18 @@ class GoalLocalDataSourceImpl(
     private val goalTransactionDao: GoalTransactionDao
 ) : GoalLocalDataSource {
 
-    override suspend fun getAllGoals(): Flow<List<GoalWithSavedAmount>> = goalDao.getAllGoals().map {
-        it.map { goalEntity -> goalEntity.asModel() }
-    }
+    override suspend fun getAllGoals(): Flow<List<GoalWithSavedAmount>> =
+        goalDao.getAllGoals().map {
+            it.map { goalEntity -> goalEntity.asModel() }
+        }
 
     override suspend fun insertGoal(goal: Goal): Long =
         goalDao.insertGoal(goal.asEntity())
 
-    override suspend fun getGoalById(id: Int): Flow<GoalWithSavedAmount> = goalDao.getGoalById(id).map {
-        it.asModel()
-    }
+    override suspend fun getGoalById(id: Int): Flow<GoalWithSavedAmount> =
+        goalDao.getGoalById(id).map {
+            it.asModel()
+        }
 
     override suspend fun updatePinStatus(goal: Goal) {
         val updateGoal = goal.copy(isPinned = !goal.isPinned)
@@ -56,6 +59,11 @@ class GoalLocalDataSourceImpl(
 
     override suspend fun getTransactionsForGoal(goalId: String): Flow<List<GoalTransaction>> =
         goalTransactionDao.getTransactionsForGoal(goalId).map {
+            it.map { transaction -> transaction.asModel() }
+        }
+
+    override suspend fun getAllTransactions(): Flow<List<GoalTransaction>> =
+        goalTransactionDao.getAllTransactions().map {
             it.map { transaction -> transaction.asModel() }
         }
 

@@ -1,6 +1,7 @@
 package br.com.finquest.features.home.ui.history
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +54,7 @@ fun HistoryScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getGoals()
+        viewModel.getTransactions(null)
     }
 
     HistoryScreen(state, viewModel)
@@ -80,23 +84,56 @@ fun HistoryScreen(
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
-        FilterContent(state = state, viewModel = viewModel)
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            transactionsByMonth?.forEach { (month, transactions) ->
-                item {
-                    Text(
-                        modifier = Modifier.padding(bottom = 16.dp),
-                        text = month,
-                        fontFamily = FontFamily
-                    )
-                }
-                items(transactions) { transaction ->
-                    HistoryItem(goalTransaction = transaction)
+        FilterContent(
+            state = state,
+            viewModel = viewModel
+        )
+        if (state.transactions?.isEmpty() == true) {
+            EmptyState()
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                transactionsByMonth?.forEach { (month, transactions) ->
+                    item {
+                        Text(
+                            modifier = Modifier.padding(bottom = 16.dp),
+                            text = month,
+                            fontFamily = FontFamily
+                        )
+                    }
+                    items(transactions) { transaction ->
+                        HistoryItem(goalTransaction = transaction)
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EmptyState(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_empty_history),
+            contentDescription = ""
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Seu histórico está vazio.",
+            fontFamily = FontFamily,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Você ainda não criou nenhuma meta. Defina um objetivo e comece a economizar.",
+            fontFamily = FontFamily,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -182,10 +219,8 @@ fun HistoryItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    text = goalTransaction.dateAdded.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                    fontFamily = FontFamily,
-                    fontSize = 12.sp,
-                    color = Color(0xFFBCBCBC)
+                    text = goalTransaction.name ?: "",
+                    fontFamily = FontFamily
                 )
                 Text(
                     text = "+${goalTransaction.amount?.toMoneyString()}",
@@ -193,6 +228,13 @@ fun HistoryItem(
                     fontWeight = FontWeight.SemiBold
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = goalTransaction.dateAdded.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                fontFamily = FontFamily,
+                fontSize = 12.sp,
+                color = Color(0xFFBCBCBC)
+            )
         }
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 16.dp),

@@ -16,6 +16,7 @@ interface GoalRepository {
 
     suspend fun insertTransaction(transaction: GoalTransaction)
     suspend fun getTransactionsForGoal(goalId: String): Flow<List<GoalTransaction>>
+    suspend fun getAllTransactions(): Flow<List<GoalTransaction>>
     suspend fun getSavedAmount(goalId: Int): Long?
 }
 
@@ -40,6 +41,9 @@ class GoalRepositoryImpl(
 
     override suspend fun getTransactionsForGoal(goalId: String): Flow<List<GoalTransaction>> =
         dataSource.getTransactionsForGoal(goalId)
+
+    override suspend fun getAllTransactions(): Flow<List<GoalTransaction>> =
+        dataSource.getAllTransactions()
 
     override suspend fun getSavedAmount(goalId: Int): Long? = dataSource.getSavedAmount(goalId)
 }

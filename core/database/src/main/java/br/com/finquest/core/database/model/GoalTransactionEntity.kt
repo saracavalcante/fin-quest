@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 data class GoalTransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
+    val name: String,
     val goalId: Int,
     val amount: Long,
     val dateAdded: LocalDateTime = LocalDateTime.now()
@@ -27,6 +28,7 @@ data class GoalTransactionEntity(
 
 fun GoalTransaction.asEntity() = GoalTransactionEntity(
     id = id ?: 0,
+    name = name ?: "",
     goalId = goalId ?: 0,
     amount = amount ?: 0,
     dateAdded = dateAdded
@@ -34,6 +36,7 @@ fun GoalTransaction.asEntity() = GoalTransactionEntity(
 
 fun GoalTransactionEntity.asModel() = GoalTransaction(
     id = id,
+    name = name,
     goalId = goalId,
     amount = amount,
     dateAdded = dateAdded

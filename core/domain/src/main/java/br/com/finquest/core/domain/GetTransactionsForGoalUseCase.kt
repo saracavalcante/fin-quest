@@ -7,7 +7,11 @@ import kotlinx.coroutines.flow.Flow
 class GetTransactionsForGoalUseCase(
     private val repository: GoalRepository
 ) {
-    suspend operator fun invoke(goalId: String): Flow<List<GoalTransaction>> {
-        return repository.getTransactionsForGoal(goalId)
+    suspend operator fun invoke(goalId: Int?): Flow<List<GoalTransaction>> {
+        return if (goalId == null) {
+            repository.getAllTransactions()
+        } else {
+            repository.getTransactionsForGoal(goalId.toString())
+        }
     }
 }
