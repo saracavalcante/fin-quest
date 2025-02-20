@@ -40,8 +40,11 @@ dependencies {
 
     implementation(project(":core:model"))
     implementation(project(":core:database"))
+    implementation(project(":core:ui"))
 
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.work.runtime.ktx)
 
     //Koin
     implementation(project.dependencies.platform(libs.koin.bom))

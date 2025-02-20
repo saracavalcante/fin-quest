@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
 
+    implementation(libs.androidx.work.runtime.ktx)
+
     //Koin
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)

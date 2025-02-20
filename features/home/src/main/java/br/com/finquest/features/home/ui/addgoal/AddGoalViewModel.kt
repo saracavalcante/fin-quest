@@ -1,5 +1,6 @@
 package br.com.finquest.features.home.ui.addgoal
 
+import android.app.Application
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import br.com.finquest.core.common.enums.BottomSheetType
 import br.com.finquest.core.common.enums.GoalEnum
 import br.com.finquest.core.common.util.toCents
+import br.com.finquest.core.common.util.toLocalDate
+import br.com.finquest.core.data.worker.scheduleGoalReminder
 import br.com.finquest.core.domain.AddGoalUseCase
 import br.com.finquest.core.domain.InsertTransactionUseCase
 import br.com.finquest.core.model.data.Goal
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AddGoalViewModel(
+    private val application: Application,
     private val addGoalUseCase: AddGoalUseCase,
     private val insertTransactionUseCase: InsertTransactionUseCase
 ) : ViewModel() {
@@ -104,6 +108,10 @@ class AddGoalViewModel(
         }
     }
 
+    private fun scheduleReminder(name: String, deadline: String) {
+        scheduleGoalReminder(application, name, deadline.toLocalDate())
+    }
+
     fun addGoal() {
         viewModelScope.launch {
             val goal = Goal(
@@ -126,6 +134,7 @@ class AddGoalViewModel(
                     )
                 )
             }
+            scheduleReminder(uiState.value.name, uiState.value.deadline)
         }
     }
 }
