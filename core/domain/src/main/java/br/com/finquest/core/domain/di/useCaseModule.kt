@@ -8,6 +8,7 @@ import br.com.finquest.core.domain.GetSavedAmountUseCase
 import br.com.finquest.core.domain.GetTransactionsForGoalUseCase
 import br.com.finquest.core.domain.InsertTransactionUseCase
 import br.com.finquest.core.domain.PinGoalUseCase
+import br.com.finquest.core.domain.ThemeUseCase
 import br.com.finquest.core.domain.UpdateGoalUseCase
 import org.koin.dsl.module
 
@@ -22,4 +23,6 @@ val useCaseModule = module {
     single { InsertTransactionUseCase(get()) }
     single { GetTransactionsForGoalUseCase(get()) }
     single { GetSavedAmountUseCase(get()) }
+
+    single { ThemeUseCase(get()) }
 }

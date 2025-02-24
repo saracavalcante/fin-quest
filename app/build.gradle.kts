@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
+    implementation(project(":core:common"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -25,8 +25,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.finquest.core.common.enums.GoalEnum
+import br.com.finquest.core.common.presentation.ThemeViewModel
 import br.com.finquest.core.common.util.currentDate
 import br.com.finquest.core.common.util.toMoneyString
 import br.com.finquest.core.components.BaseDialog
@@ -54,9 +55,11 @@ import br.com.finquest.core.ui.R
 @Composable
 fun GoalsScreen(
     viewModel: GoalsViewModel,
+    themeViewModel: ThemeViewModel,
     onGoalClick: (Int?) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val isDarkMode by themeViewModel.isDarkMode.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getGoals()
@@ -65,6 +68,8 @@ fun GoalsScreen(
     GoalsScreen(
         state = state,
         viewModel = viewModel,
+        themeViewModel = themeViewModel,
+        isDarkMode = isDarkMode,
         onClick = onGoalClick
     )
 
@@ -84,29 +89,52 @@ fun GoalsScreen(
 @Composable
 private fun GoalsScreen(
     state: GoalsUiState,
+    isDarkMode: Boolean,
     viewModel: GoalsViewModel,
+    themeViewModel: ThemeViewModel,
     onClick: (Int?) -> Unit
 ) {
     val filteredGoals = state.goals.filter { it.goal.status == state.filter.value }
+    val themeIcon = animateIntAsState(
+        targetValue = if (isDarkMode) R.drawable.ic_dark else R.drawable.ic_light
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = colorScheme.background)
             .padding(24.dp)
     ) {
-        Text(
-            text = "Seja Bem-vindo",
-            fontFamily = FontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
-        )
-        Text(
-            text = currentDate(),
-            fontFamily = FontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Seja Bem-vindo",
+                    fontFamily = FontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = colorScheme.onSurface
+                )
+                Text(
+                    text = currentDate(),
+                    fontFamily = FontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                modifier = Modifier.clickable {
+                    themeViewModel.toggleTheme(!isDarkMode)
+                },
+                painter = painterResource(themeIcon.value),
+                contentDescription = "",
+                tint = colorScheme.onSurface
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         FilterContent(state = state, viewModel = viewModel)
         Spacer(modifier = Modifier.height(16.dp))
@@ -196,10 +224,10 @@ fun FilterContent(
                 },
                 border = BorderStroke(width = 0.dp, color = Color.Transparent),
                 colors = FilterChipDefaults.filterChipColors(
-                    containerColor = Color(0xFFF5F5F5),
-                    labelColor = Color.Black,
-                    selectedContainerColor = Color.Black,
-                    selectedLabelColor = Color.White
+                    containerColor = Color.Transparent,
+                    labelColor = colorScheme.onSurface,
+                    selectedContainerColor = colorScheme.primary,
+                    selectedLabelColor = colorScheme.onPrimary
                 )
             )
         }
@@ -255,7 +283,8 @@ fun GoalContent(
                         text = goal.name ?: "",
                         fontFamily = FontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = Color.Black
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
@@ -278,7 +307,8 @@ fun GoalContent(
                     text = "${savedAmount.toMoneyString()} de ${goal.targetAmount?.toMoneyString()}",
                     fontFamily = FontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = Color.Black
                 )
                 if (!goal.deadline.isNullOrBlank()) {
                     Row(
@@ -288,14 +318,16 @@ fun GoalContent(
                             text = "Data limite:",
                             fontFamily = FontFamily,
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = Color.Black
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = goal.deadline ?: "",
                             fontFamily = FontFamily,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
+                            color = Color.Black
                         )
                     }
                 }

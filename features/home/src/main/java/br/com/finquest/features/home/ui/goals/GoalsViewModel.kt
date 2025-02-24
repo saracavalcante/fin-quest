@@ -7,6 +7,7 @@ import br.com.finquest.core.domain.DeleteGoalUseCase
 import br.com.finquest.core.domain.GetAllGoalsUseCase
 import br.com.finquest.core.domain.GetSavedAmountUseCase
 import br.com.finquest.core.domain.PinGoalUseCase
+import br.com.finquest.core.domain.ThemeUseCase
 import br.com.finquest.core.domain.UpdateGoalUseCase
 import br.com.finquest.core.model.data.Goal
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +19,7 @@ class GoalsViewModel(
     private val goalsUseCase: GetAllGoalsUseCase,
     private val pinGoalUseCase: PinGoalUseCase,
     private val deleteGoalUseCase: DeleteGoalUseCase,
-    private val updateGoalUseCase: UpdateGoalUseCase,
-    private val getSavedAmountUseCase: GetSavedAmountUseCase
+    private val updateGoalUseCase: UpdateGoalUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GoalsUiState())

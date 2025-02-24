@@ -46,6 +46,8 @@ dependencies {
 
     implementation(libs.androidx.work.runtime.ktx)
 
+    implementation(libs.androidx.datastore.preferences)
+
     //Koin
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)

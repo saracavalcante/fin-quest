@@ -1,6 +1,7 @@
 package br.com.finquest
 
 import android.app.Application
+import br.com.finquest.core.common.presentation.di.commonModule
 import br.com.finquest.core.data.di.dataModule
 import br.com.finquest.core.database.di.databaseModule
 import br.com.finquest.core.domain.di.useCaseModule
@@ -16,7 +17,8 @@ class MyApplication : Application() {
                 featureModule,
                 databaseModule,
                 dataModule,
-                useCaseModule
+                useCaseModule,
+                commonModule
             ).androidContext(this@MyApplication)
         }
     }

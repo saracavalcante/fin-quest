@@ -17,6 +17,7 @@ fun NavGraphBuilder.goalsScreen(
     composable(route = GOALS_ROUTE) {
         GoalsScreen(
             viewModel = koinViewModel(),
+            themeViewModel = koinViewModel(),
             onGoalClick = onGoalClick
         )
     }

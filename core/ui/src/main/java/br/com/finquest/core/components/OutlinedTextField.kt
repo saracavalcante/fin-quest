@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -61,7 +62,7 @@ fun CustomOutlinedTextField(
                     text = placeholder,
                     fontFamily = FontFamily,
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = colorScheme.onSurfaceVariant
                 )
             },
             leadingIcon = leadingIcon,
@@ -71,7 +72,7 @@ fun CustomOutlinedTextField(
                 focusedBorderColor = Color(0xFFBCBCBC),
                 disabledBorderColor = Color(0xFFBCBCBC),
                 disabledPlaceholderColor = Color.Black,
-                disabledTextColor = Color.Black
+                disabledTextColor = colorScheme.onSurfaceVariant
             )
         )
         error?.let { error ->

@@ -12,20 +12,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import br.com.finquest.core.common.presentation.ThemeViewModel
 import br.com.finquest.core.theme.FinQuestTheme
 import br.com.finquest.navigation.AppNavHost
 import br.com.finquest.navigation.navigationBar.BottomNavigationBar
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
+    private val mainViewModel: ThemeViewModel by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val isDarkMode by mainViewModel.isDarkMode.collectAsStateWithLifecycle()
+
             RequestNotificationPermission()
-            FinQuestTheme {
+            FinQuestTheme(isDarkMode) {
                 AppNavigation()
             }
         }

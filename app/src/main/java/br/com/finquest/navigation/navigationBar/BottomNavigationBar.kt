@@ -6,9 +6,10 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +64,7 @@ fun BottomBar(navController: NavController) {
         visible = showNavigationBar
     ) {
         NavigationBar(
-            containerColor = Color.White
+            containerColor = colorScheme.background
         ) {
             destinations.forEach { item ->
                 NavItem(
@@ -108,14 +109,12 @@ fun RowScope.NavItem(
             )
         },
         onClick = onClick,
-        colors = NavigationBarItemColors(
-            selectedIndicatorColor = Color.White,
-            selectedTextColor = Color.Black,
-            unselectedTextColor = Color(0xFFBCBCBC),
-            selectedIconColor = Color.Black,
-            unselectedIconColor = Color(0xFFBCBCBC),
-            disabledIconColor = Color(0xFFBCBCBC),
-            disabledTextColor = Color(0xFFBCBCBC)
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = colorScheme.primary,
+            unselectedIconColor = colorScheme.onSurfaceVariant,
+            selectedTextColor = colorScheme.primary,
+            unselectedTextColor = colorScheme.onSurfaceVariant,
+            indicatorColor = Color.Transparent
         )
     )
 }

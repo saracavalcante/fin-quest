@@ -18,11 +18,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -79,7 +78,7 @@ fun AddGoalScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(colorScheme.background)
             .padding(24.dp)
             .verticalScroll(rememberScrollState()),
     ) {
@@ -87,7 +86,8 @@ fun AddGoalScreen(
             text = "Nova Meta",
             fontFamily = FontFamily,
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(26.dp))
         ImageContent(state = state, viewModel = viewModel)
@@ -102,6 +102,8 @@ fun AddGoalScreen(
             modifier = Modifier.fillMaxWidth(),
             text = "Criar meta",
             enabled = state.isEnabled(),
+            containerColor = colorScheme.primary,
+            textColor = colorScheme.onPrimary,
             onClick = {
                 viewModel.addGoal()
                 navigateToHome()
@@ -171,7 +173,8 @@ fun DateContent(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_calendar),
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = Color.Black
                 )
             }
         }
@@ -201,7 +204,7 @@ fun ImageContent(
         modifier = modifier
             .fillMaxWidth()
             .dashedBorder(
-                color = Color(0xFFBCBCBC),
+                color = colorScheme.onSurface,
                 shape = RoundedCornerShape(16.dp)
             )
             .clip(RoundedCornerShape(16.dp))
@@ -231,7 +234,8 @@ fun ImageContent(
                 fontFamily = FontFamily,
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = Color.Black
             )
         }
     }
